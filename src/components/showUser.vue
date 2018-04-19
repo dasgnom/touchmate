@@ -16,7 +16,7 @@
       </p>
     </b-card>
     <ul class="user">
-      <li v-for="value, key in user">
+      <li v-for="(value, key) in user" v-bind:key="key">
         {{ key }}:
         {{ value }}
       </li>
@@ -34,7 +34,7 @@
       </p>
     </b-card>
     <ul v-show="!productError">
-      <li v-for="product in products">
+      <li v-for="product in products" v-bind:key="product.id">
         {{ product.name }}
       </li>
     </ul>

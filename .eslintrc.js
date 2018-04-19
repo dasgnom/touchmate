@@ -1,9 +1,11 @@
-module.export = {
-  extends: ['joblift/2space'],
-  parser: 'babel-eslint',
+module.exports = {
+  extends: ["joblift/2space", 'plugin:vue/recommended'],
+  parserOptions: {
+    parser: "babel-eslint",
+  },
   env: {
     browser: true,
     node: true,
-    es6: true,
-  },
-}
+    es6: true
+  }
+};

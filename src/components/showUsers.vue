@@ -2,7 +2,7 @@
   <div id="show-users">
     <h2>Users</h2>
     <div class="row">
-      <div class="col-2" v-for="user in users">
+      <div class="col-2" v-for="user in users" v-bind:key="user.id">
         <b-card
           img-src="src/assets/img/user.png"
           img-alt=user.name
