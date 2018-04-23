@@ -1,44 +1,43 @@
 <template>
   <div id="show-user">
-    <div v-bind:class="{loading: loading}">
-    <div v-show="{loading: loading}">
+    <div v-show="loading" class="loading">
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
-    <h2>Users</h2>
-    <b-card
-      v-show="userError"
-      bg-variant="danger"
-      text-variant="white"
-      header="<strong>ERROR</strong>">
-      <p class="card-text">
-        Unable to get products from your space market API. Please try again. If the error
-        persists, please contact the haxxor in charge!
-      </p>
-    </b-card>
-    <ul class="user">
-      <li v-for="(value, key) in user" v-bind:key="key">
-        {{ key }}:
-        {{ value }}
-      </li>
-    </ul>
-    <h2>Choose your poison</h2>
-
-    <b-card
+    <h2 class="mb-4">{{ user.name }}</h2>
+    <dl>
+      <dt>
+        Guthaben
+      </dt>
+      <dd>
+        <span v-if="server.currency_before">{{ server.currency }}</span> {{ user.balance }} <span v-if="!server.currency_before">{{ server.currency }}</span>
+      </dd>
+    </dl>
+    <b-alert
       v-show="productError"
       bg-variant="danger"
-      text-variant="white"
-      header="<strong>ERROR</strong>">
-      <p class="card-text">
+      text-variant="white">
         Unable to get products from your space market API. Please try again. If the error
         persists, please contact the haxxor in charge!
-      </p>
-    </b-card>
-    <ul v-show="!productError">
-      <li v-for="product in products" v-bind:key="product.id">
-        {{ product.name }}
-      </li>
-    </ul>
-  </div>
+    </b-alert>
+    <h2>Choose your poison</h2>
+
+    <div class="row" v-show="!productError">
+      <div v-for="product in products" v-bind:key="product.id" class="tm-item">
+        <div class="name">
+          {{ product.name }} <br />
+          {{ product.price | currency }}
+        </div>
+      </div>
+    </div>
+    <h2>Recharge your account</h2>
+    <div class="row">
+      <div class="col-2" v-for="amount in recharge" v-bind:key="amount">
+        <b-img src="src/assets/img/money/50.png" fluid-grow />
+        <div class="name">
+          {{ amount }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,28 +54,37 @@ export default {
       userError: undefined,
       userStatus: 0,
       loading: true,
+      recharge: [50, 100, 200, 500, 1000, 2000, 5000],
+      server: {
+        currency: '€',
+        decimal_separator: ",",
+        currency_before: false,
+      }
     }
   },
   methods: {
   },
   mounted() {
     this.loading = true;
-    this.$http.get('http://localhost:2342/v3/users/' + this.id).then(function(data) {
+    this.$http.get('http://localhost:8080/v3/users/' + this.id).then(function(data) {
       this.user = data.body;
+      if (this.user.balance == 0) {
+        this.user.balance = "0" + this.server.decimal_separator + "00";
+      }
       this.userError = false;
-      console.log(data);
     }, function(data) {
       this.userError = true;
       this.userStatus = data.status;
     });
-    this.$http.get('http://localhost:2342/v3/products').then(function(data) {
+
+    this.$http.get('http://localhost:8080/v3/products').then(function(data) {
       this.products = data.body[0];
       this.productError = false;
-      console.log(data);
       this.loading = false;
     }, function(data) {
       this.productStatus = data.status;
       this.productError = true;
+      this.loading = false;
     });
   }
 }
@@ -84,6 +92,18 @@ export default {
 
 <style scoped>
   .loading {
-    background: red;
+    background: #333333cc;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    z-index: 999;
+    margin: 0 auto;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 4em;
+    color: #fff;
+    margin-top: 59px;
   }
 </style>

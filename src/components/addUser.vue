@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Add User</h2>
+    <h2 class="mb-4">Add User</h2>
     <b-alert variant="danger" show v-show="resp.error">{{ resp.message }}</b-alert>
     <form class="form">
       <label>Username</label>
@@ -37,7 +37,7 @@ export default {
         console.log('Bitte alles ausfuellen.');
         return;
       }
-      this.$http.post('http://localhost:2342/v3/users/', {
+      this.$http.post('http://localhost:8080/v3/users/', {
         name: this.user.username,
         email: this.user.email,
         active: this.user.active,
@@ -51,8 +51,8 @@ export default {
         console.log(response);
         if (response.status != 0) {
           this.resp.error = true;
-          var message = JSON.parse(response.bodyText);
-          this.resp.message = JSON.parse(response.bodyText).error;
+          var message = response.body;
+          this.resp.message = response.body.error;
         } else {
           this.resp.error = true;
           this.resp.message = "Unable to communicate with the server"

@@ -1,0 +1,19 @@
+div.tm-item {
+  margin: 0 auto;
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 0;
+}
+
+div.tm-item div.name {
+  background: #00000099;
+  width: 100%;
+  bottom: 0px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+}
+
+body {
+  padding-top: 90px;
+}
