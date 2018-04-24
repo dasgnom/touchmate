@@ -58,6 +58,7 @@
                     placeholder="1.50"
                     pattern=""
                     v-model="product.price"
+                    v-bind:value="'product.price.toString().slice(0, -2) + serverinfo.decimal_separator + product.price.toString().substr(-2, 2)'"
                     pattern="[0-9]+[.,][0-9]+"
                     required
                   />
@@ -70,7 +71,10 @@
           </div>
       </div>
     <div class="col-4">
-      Bild und so
+      <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img img-fluid">
+      <div class="text-center" v-if="product.image">
+        <a class="btn btn-danger mt-3" v-on:click="deleteImage()">Delete Image</a>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -143,7 +147,7 @@
             label="product image"
             label-for="product_image"
           >
-            <b-form-file v-model="file" placeholder="Choose a file..." class="form-control text-white"></b-form-file>
+            <b-form-file v-model="image" placeholder="Choose a file..." class="form-control text-white"></b-form-file>
           </b-form-group>
         </div>
       </div>
@@ -166,44 +170,69 @@ export default {
       productError: false,
       loading: true,
       server: {},
-      file: false,
+      image: null,
       updateSuccess: false,
+      image_id: false,
     }
   },
   methods: {
-    updateProduct: function() {
-      console.log("updating product")
-      this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString(), {
+    deleteImage: function() {
+      console.log('Delete Image');
+    },
+    saveProduct: function() {
+      this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
         name: this.product.name,
         price: this.product.price.replace(",", "").replace(".", ""),
         energy: this.product.energy,
         sugar: this.product.sugar,
         caffeine: this.product.caffeine,
         alcohol: this.product.alcohol,
+        image: this.image_id
       }).then(function(response) {
         console.log(response);
         this.updateSuccess = true;
       }, function(response) {
         console.log(response);
       });
+    },
+    updateProduct: function() {
+      console.log("updating product")
+      if (this.image) {
+        console.log('Image selected');
+        var formData = new FormData();
+        formData.append('image', this.image, this.image.name);
+        this.$http.post('//localhost:8080/v3/images/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        }).then(response => {
+          console.log(response);
+          this.image_id = response.body.id;
+          console.log(this.image_id);
+          this.saveProduct();
+        }, response => {
+          console.log(response);
+          return;
+        });
+      } else {
+        this.saveProduct();
+      }
     }
   },
-  mounted() {
+  created() {
     this.loading = true;
     console.log(this.pid);
-    this.$http.get('http://localhost:8080/v3/products/' + this.pid).then(function(data) {
+    this.$http.get('http://localhost:8080/v3/products/' + this.pid + '/').then(function(data) {
       this.product = data.body;
       this.product.price = data.body.price.toString().slice(0, -2) + this.serverinfo.decimal_separator + data.body.price.toString().substr(-2, 2);
       this.productError = false;
-      console.log(data.body);
       this.loading = false;
     }, function(data) {
       this.productStatus = data.status;
       this.productError = true;
       this.loading = false;
-      console.log(data);
     });
-  }
+  },
 }
 </script>
 
@@ -229,5 +258,9 @@ export default {
   }
   .custom-file-label {
     color: #white;
+  }
+
+  .deleteImage {
+
   }
 </style>

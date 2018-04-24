@@ -51,7 +51,7 @@ export default {
   methods: {
 
   },
-  mounted() {
+  created() {
     this.$http.get('//localhost:8080/v3/info').then(function(data) {
       console.log(data);
       this.serverinfo = data.body;

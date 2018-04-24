@@ -32,7 +32,7 @@
       <tr v-for="product in products" v-bind:key="product.id">
           <td>
             <router-link :to="'/products/' + product.id">
-              <img src="src/assets/img/user.png" class="img-fluid" style="max-width: 80px;"/>
+              <img v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid" style="max-width: 80px;"/>
             </router-link>
           </td>
           <td>
@@ -79,7 +79,7 @@ export default {
     this.$http.get('http://localhost:8080/v3/products').then(function(data) {
       this.products = data.body[0];
       this.loading = false;
-      console.log("okay");
+      console.log("products loaded");
       this.productsError = false;
     }, function(data) {
       this.productsStatus = data.status;
