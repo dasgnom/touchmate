@@ -1,6 +1,8 @@
 import '../node_modules/bootswatch/dist/darkly/bootstrap.css';
 import App from './App.vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
+import moment from 'moment';
+import momentTimezone from 'moment-timezone';
 import Routes from './routes';
 import Vue from 'vue';
 import VueResource from 'vue-resource';
@@ -10,18 +12,29 @@ Vue.use(BootstrapVue);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 
-Vue.filter('currency', value => {
-  if (value.toString().trim() === 0) {
-    return '0,00';
-  } else if (value.toString().trim().strlen === 2) {
-    return `0,${value.toString().substr(-2, 2)} €`;
-  } else if (value.toString().trim().strlen === 1) {
-    return `0${value.toString().slice(0, -2)},0${value.toString().substr(-2, 2)} €`;
-  } else if (value.toString().trim().strlen > 2) {
-    // return value.toString().slice(0, -2) + value.toString().substr(-2, 2);
+Vue.prototype.moment = moment;
+Vue.prototype.momentTimezone = momentTimezone;
+
+Vue.filter('currency', (value, currency = '€', currency_before = false, decimal_separator = ',') => {
+  let formated = '';
+  let val = value;
+
+  if (!val) {
+    val = `000`;
+  } else if (val.toString().length === 1) {
+    val = `0${val}`;
+  } else if (val.toString().length === 2) {
+    val = `00${val}`;
+  }
+  formated = val.toString().slice(0, -2);
+  formated += decimal_separator;
+  formated += val.toString().substr(-2, 2);
+
+  if (currency_before) {
+    return `${currency}${formated}`;
   }
 
-  return 'foo';
+  return `${formated} ${currency}`;
 });
 
 // VueRouter
