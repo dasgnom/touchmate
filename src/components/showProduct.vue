@@ -72,11 +72,10 @@
                   </b-input-group-text>
                   <b-form-input
                     placeholder="1.50"
-                    pattern=""
-                    v-model="product.price"
-                    v-bind:value="'product.price | currency'"
                     pattern="[0-9]+[.,][0-9]+"
                     required
+                    v-model="product.price"
+                    v-bind:value="product.price"
                   />
                   <b-input-group-text slot="append" v-if="!serverinfo.currency_before">
                     <span class="text-white">{{ serverinfo.currency }}</span>
@@ -91,7 +90,7 @@
       <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid rounded col-9 mx-auto d-block">
       <button v-if="product.image" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent="deleteImage()">Delete Picture</button>
       <div v-if="!product.image" class="col-1 mx-auto d-block align-middle h-100 mt-4">
-        <b-form-file v-on:input="saveImage()" id="productImage" v-model="image" lazy class="form-control" style="opacity: 0.0;"></b-form-file>
+        <b-form-file v-on:input="saveImage()" id="productImage" v-model="image" class="form-control invisible" style="opacity: 0.0;"></b-form-file>
         <button v-if="!product.image" class="btn btn-secondary align-middle" v-on:click.prevent="chooseFiles()">Add Picture</button>
       </div>
     </div>
@@ -171,6 +170,7 @@ export default {
   props: ['serverinfo'],
   data () {
     return {
+      price: false,
       product: {},
       pid: this.$route.params.pid,
       productStatus: 0,
@@ -254,9 +254,6 @@ export default {
       this.productError = true;
       this.loading = false;
     });
-  },
-  updated() {
-    console.log('vue updated');
   },
 }
 </script>

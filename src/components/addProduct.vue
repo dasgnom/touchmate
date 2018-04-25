@@ -170,7 +170,7 @@ export default {
         console.log("product posted");
         console.log(response);
         console.log(response.status);
-        window.location = "/#/products/" + response.body.id;
+        window.location = "/products/" + response.body.id;
       }, response => {
         console.log(response);
         if (response.status != 0) {
