@@ -39,7 +39,7 @@ Vue.filter('currency', (value, currency = '€', currency_before = false, decima
 
 // VueRouter
 const router = new VueRouter({
-  mode: 'hash',
+  mode: 'history',
   routes: Routes,
 });
 

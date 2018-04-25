@@ -4,16 +4,23 @@
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
     <h2 class="mb-4">edit {{ product.name }}</h2>
-    <b-card
+    <b-alert
       v-if="productError"
       bg-variant="danger"
       text-variant="white"
-      header="<strong>ERROR</strong>">
-      <p class="card-text">
-        Unable to get the product from your space market API. Please try again. If the error
+      >
+        <strong>Error:</strong> Unable to get the product from your space market API. Please try again. If the error
         persists, please contact the haxxor in charge!
-      </p>
-    </b-card>
+    </b-alert>
+    <b-alert
+      :show="imageDeleteError"
+      variant="danger"
+      class="mb-4 mt-4"
+      dismissible
+      @dismissed="imageDeleteError=false"
+      >
+        <strong>Error:</strong> An error occured while deleting the image.
+    </b-alert>
     <b-alert
       :show="updateSuccess"
       variant="success"
@@ -22,6 +29,15 @@
       @dismissed="updateSuccess=false"
     >
       Product updated
+    </b-alert>
+    <b-alert
+      :show="imageAddSuccess"
+      variant="success"
+      class="mb-4 mt-4"
+      dismissible
+      @dismissed="imageAddSuccess=false"
+    >
+      Image added
     </b-alert>
     <form class="form" v-on:submit.prevent="updateProduct">
     <div class="row">
@@ -58,7 +74,7 @@
                     placeholder="1.50"
                     pattern=""
                     v-model="product.price"
-                    v-bind:value="'product.price.toString().slice(0, -2) + serverinfo.decimal_separator + product.price.toString().substr(-2, 2)'"
+                    v-bind:value="'product.price | currency'"
                     pattern="[0-9]+[.,][0-9]+"
                     required
                   />
@@ -70,10 +86,13 @@
             </div>
           </div>
       </div>
-    <div class="col-4">
-      <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img img-fluid">
-      <div class="text-center" v-if="product.image">
-        <a class="btn btn-danger mt-3" v-on:click="deleteImage()">Delete Image</a>
+
+    <div class="col-4 tm-productImage h-100 d-block">
+      <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid rounded col-9 mx-auto d-block">
+      <button v-if="product.image" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent="deleteImage()">Delete Picture</button>
+      <div v-if="!product.image" class="col-1 mx-auto d-block align-middle h-100 mt-4">
+        <b-form-file v-on:input="saveImage()" id="productImage" v-model="image" lazy class="form-control" style="opacity: 0.0;"></b-form-file>
+        <button v-if="!product.image" class="btn btn-secondary align-middle" v-on:click.prevent="chooseFiles()">Add Picture</button>
       </div>
     </div>
   </div>
@@ -139,18 +158,6 @@
           </b-form-group>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <b-form-group
-            id="product_image_group"
-            description="Choose a product image"
-            label="product image"
-            label-for="product_image"
-          >
-            <b-form-file v-model="image" placeholder="Choose a file..." class="form-control text-white"></b-form-file>
-          </b-form-group>
-        </div>
-      </div>
     </div>
   </div>
   <button type="submit" class="btn btn-primary">Save Product</button>
@@ -168,16 +175,29 @@ export default {
       pid: this.$route.params.pid,
       productStatus: 0,
       productError: false,
+      imageDeleteError: false,
       loading: true,
       server: {},
       image: null,
       updateSuccess: false,
-      image_id: false,
+      imageUpdateSuccess: false,
+      imageAddSuccess: false,
     }
   },
   methods: {
+    chooseFiles: function() {
+      document.getElementById("productImage").click();
+    },
     deleteImage: function() {
       console.log('Delete Image');
+      console.log(this.product.image);
+      this.$http.delete('//localhost:8080/v3/images/' + this.product.image + '/').then( response => {
+        console.log('image ' +  this.product.image + ' deleted');
+        this.product.image = "";
+      }, response => {
+        console.log(response);
+        this.imageDeleteError = true;
+      });
     },
     saveProduct: function() {
       this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
@@ -187,7 +207,7 @@ export default {
         sugar: this.product.sugar,
         caffeine: this.product.caffeine,
         alcohol: this.product.alcohol,
-        image: this.image_id
+        image: this.product.image,
       }).then(function(response) {
         console.log(response);
         this.updateSuccess = true;
@@ -197,27 +217,29 @@ export default {
     },
     updateProduct: function() {
       console.log("updating product")
-      if (this.image) {
-        console.log('Image selected');
-        var formData = new FormData();
-        formData.append('image', this.image, this.image.name);
-        this.$http.post('//localhost:8080/v3/images/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }
-        }).then(response => {
+      this.saveProduct();
+    },
+    saveImage: function() {
+      console.log('add image');
+      const formData = new FormData();
+      console.log(this.image);
+      formData.append('image', this.image);
+      this.$http.post('//localhost:8080/v3/images/', formData).then( response => {
+        console.log(response);
+        this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
+          image: response.body.id,
+        }).then( response => {
+          this.imageAddSuccess = true;
+          this.product = response.body;
           console.log(response);
-          this.image_id = response.body.id;
-          console.log(this.image_id);
-          this.saveProduct();
         }, response => {
+          this.productError = true;
           console.log(response);
-          return;
         });
-      } else {
-        this.saveProduct();
-      }
-    }
+      }, response => {
+        console.log(response);
+      })
+    },
   },
   created() {
     this.loading = true;
@@ -232,6 +254,9 @@ export default {
       this.productError = true;
       this.loading = false;
     });
+  },
+  updated() {
+    console.log('vue updated');
   },
 }
 </script>
@@ -256,8 +281,15 @@ export default {
   .custom-file-label::after {
     content: "Browse";
   }
+
   .custom-file-label {
     color: #white;
+  }
+
+  .tm-productImage img {
+    max-height: 220px;
+    width: auto;
+    display: block;
   }
 
   .deleteImage {

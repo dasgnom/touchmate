@@ -19,7 +19,7 @@
     </div>
     </b-navbar>
     <div class="container">
-      <router-view v-bind:serverinfo="serverinfo"></router-view>
+      <router-view v-bind:serverinfo="serverinfo" :key="$route.fullPath"></router-view>
     </div>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
   methods: {
 
   },
-  created() {
+  beforeCreate() {
     this.$http.get('//localhost:8080/v3/info').then(function(data) {
       console.log(data);
       this.serverinfo = data.body;
