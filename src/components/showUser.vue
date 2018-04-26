@@ -3,9 +3,54 @@
     <div v-show="loading" class="loading">
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
+    <b-alert
+      :show="rechargeSuccess"
+      variant="success"
+      class="mb-4 mt-4"
+      dismissible
+      @dismissed="rechargeSuccess=false"
+    >
+      Account recharged with <strong>{{ rechargeAmount | currency }}</strong>.
+      Your new balance is: <strong>{{ user.balance | currency }}</strong>.
+    </b-alert>
+    <b-alert
+      :show="buySuccess"
+      variant="success"
+      class="mb-4 mt-4"
+      dismissible
+      @dismissed="buySuccess=false"
+    >
+      You bought a <strong>{{ rechargeAmount | currency }}</strong>.
+      Your new balance is: <strong>{{ user.balance | currency }}</strong>.
+    </b-alert>
+    <b-alert
+      :show="productError"
+      variant="danger"
+      dismissible
+      @dismissed="productError=false"
+    >
+        Unable to get products from your space market API. Please try again. If the error
+        persists, please contact the haxxor in charge!
+        <b-progress variant="danger"
+                  :max="10"
+                  :value="5"
+                  class="mt-2"
+                  striped
+                  height="2px">
+      </b-progress>
+    </b-alert>
+    <b-alert
+      :show="userError"
+      variant="danger"
+      dismissible
+      @dismissed="userError=false"
+    >
+        Unable to get the user from your space market API. Please try again. If the error
+        persists, please contact the haxxor in charge!
+    </b-alert>
     <h2 class="mb-4">{{ user.name }}</h2>
     <div class="row">
-      <div class="col-8">
+      <div class="col-12 col-sm-8">
         <dl>
           <dt class="lead">
             <strong>
@@ -19,53 +64,51 @@
             Account created:
           </dt>
           <dd>
-            <!-- {{ moment.tz(user.created_at, 'EUROPE/BERLIN').format('YYYY-MM-DD HH:mm') }} -->
             {{ moment(user.created_at).fromNow()}}
           </dd>
           <dt>
             Account last updated:
           </dt>
           <dd>
-            <!-- {{ moment.tz(user.updated_at, 'EUROPE/BERLIN').format('YYYY-MM-DD HH:mm') }} -->
             {{ moment(user.updated_at).fromNow() }}
           </dd>
         </dl>
       </div>
-      <div class="col-4 text-center">
-        <b-img v-if="user.avatar != 0" class="img-fluid" style="max-width:120px; max-width:120px;" v-bind:src="'//localhost:8080/v3/images/' + user.avatar + '/img/'" />
+      <div class="col-12 col-sm-4 text-center">
+        <b-img v-if="user.avatar != 0" class="img-fluid" style="max-width:150px; max-width:150px;" v-bind:src="'//localhost:8080/v3/images/' + user.avatar + '/img/'" />
+        <b-img v-if="user.avatar" class="img-fluid" style="max-width:150; max-width:150;" src="/src/assets/img/user.png" />
       </div>
     </div>
-    <b-alert
-      v-show="productError"
-      bg-variant="danger"
-      text-variant="white">
-        Unable to get products from your space market API. Please try again. If the error
-        persists, please contact the haxxor in charge!
-    </b-alert>
-    <b-alert
-      v-show="userError"
-      bg-variant="danger"
-      text-variant="white">
-        Unable to get the user from your space market API. Please try again. If the error
-        persists, please contact the haxxor in charge!
-    </b-alert>
     <h2>Choose your poison</h2>
 
     <div class="row" v-show="!productError">
-      <div v-for="product in products" v-bind:key="product.id" class="tm-item">
-        <b-img v-if="product.image" style="max-width: 100px; max-height: 100px;" class="img-fluid" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" />
-        <div class="name">
-          {{ product.name }} <br />
-          {{ product.price }}
+
+      <div v-for="product in products" v-bind:key="product.id" class="tm-item-container col-4 col-sm-3 col-md-2">
+        <div class="tm-item" v-on:click="buyProduct(product.id, product.price)">
+          <b-img v-if="product.image" class="img-fluid" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" />
+          <div class="name">
+            {{ product.name }}
+            <strong>
+              {{ product.price | currency }}
+            </strong>
+          </div>
         </div>
       </div>
     </div>
     <h2>Recharge your account</h2>
     <div class="row">
-      <div class="col-2" v-for="amount in serverinfo.denominations" v-bind:key="amount">
-        <b-img v-bind:src="'src/assets/img/money/' + amount + '.png'" fluid-grow />
-        <div class="name">
-          {{ amount }}
+      <div class="tm-item-container col-4 col-sm-3 col-md-2"
+        v-for="amount in serverinfo.denominations"
+        v-bind:key="amount"
+        v-on:click="rechargeAccount(amount)"
+      >
+        <div class="tm-item">
+          <b-img v-bind:src="'/src/assets/img/money/' + amount + '.png'" fluid />
+          <div class="name">
+            <strong>
+              {{ amount | currency }}
+            </strong>
+          </div>
         </div>
       </div>
     </div>
@@ -82,11 +125,14 @@ export default {
       products: [],
       id: this.$route.params.id,
       productStatus: 0,
-      productError: undefined,
+      productError: false,
       userError: undefined,
       userStatus: 0,
       loading: true,
-      recharge: [50, 100, 200, 500, 1000, 2000, 5000],
+      rechargeSuccess: false,
+      rechargeAmount: false,
+      buySuccess: false,
+      buyPrice: false,
       server: {
         currency: '€',
         decimal_separator: ",",
@@ -95,10 +141,37 @@ export default {
     }
   },
   methods: {
+    rechargeAccount: function(amount) {
+      console.log('recharge account with amount: ' + amount);
+      this.$http.post('//localhost:8080/v3/users/' + this.user.id + '/deposit/', {
+        amount: amount,
+      }).then( response => {
+        console.log(response);
+        if (response.status === 204) {
+          this.rechargeSuccess = true;
+          this.rechargeAmount = amount;
+          this.user.balance += amount;
+        }
+      });
+    },
+    buyProduct: function(product, price) {
+      console.log('buy product ' + product);
+      this.buyPrice = price;
+      this.$http.post('//localhost:8080/v3/users/' + this.user.id + '/buy/', {
+        product: product,
+      }).then( reponse => {
+        console.log("product bought");
+        this.user.balance -= this.buyPrice;
+        this.buySuccess = true;
+      }, response => {
+        console.log("bought failed");
+        console.log(response);
+      });
+    },
   },
   mounted() {
     this.loading = true;
-    this.$http.get('http://localhost:8080/v3/users/' + this.id).then(function(data) {
+    this.$http.get('http://localhost:8080/v3/users/' + this.id, {timeout: 0}).then(function(data) {
       this.user = data.body;
       // if (this.user.balance == 0) {
       //   this.user.balance = "0" + this.server.decimal_separator + "00";
@@ -111,7 +184,7 @@ export default {
       this.userStatus = data.status;
     });
 
-    this.$http.get('http://localhost:8080/v3/products').then(function(data) {
+    this.$http.get('http://localhost:8080/v3/products', {timeout: 2000}).then(function(data) {
       this.products = data.body[0];
       this.productError = false;
       this.loading = false;
@@ -119,6 +192,7 @@ export default {
       this.productStatus = data.status;
       this.productError = true;
       this.loading = false;
+      console.log(data);
     });
   }// if (this.user.balance == 0) {
       //   this.user.balance = "0" + this.server.decimal_separator + "00";

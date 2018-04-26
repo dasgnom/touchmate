@@ -22,9 +22,9 @@ Vue.filter('currency', (value, currency = '€', currency_before = false, decima
   if (!val) {
     val = `000`;
   } else if (val.toString().length === 1) {
-    val = `0${val}`;
-  } else if (val.toString().length === 2) {
     val = `00${val}`;
+  } else if (val.toString().length === 2) {
+    val = `0${val}`;
   }
   formated = val.toString().slice(0, -2);
   formated += decimal_separator;

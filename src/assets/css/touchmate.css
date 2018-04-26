@@ -1,19 +1,26 @@
+div.tm-item-container {
+  padding: 0.5em;
+  border-radius: 5px;
+  box-sizing: border-box !important;
+  display: inline-block;
+}
+
 div.tm-item {
-  margin: 0 auto;
-  border: 1px solid #666;
-  border-radius: 4px;
-  padding: 0;
+  background: #333;
+  border-radius: 5px;
+  padding: 0 0.5em;
 }
 
 div.tm-item div.name {
-  background: #00000099;
   width: 100%;
-  /* bottom: 0; */
-  /* display: block; */
-  padding: 5px;
   text-align: center;
-  /* position:relative; */
-  z-index: 999;
+  margin: 0;
+  padding-bottom: 0.8em;
+}
+
+div.tm-item div.name strong {
+  font-weight: bold;
+  display: block;
 }
 
 body {
