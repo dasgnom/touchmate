@@ -11,6 +11,7 @@
       <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
           <b-nav-item to="/" exact><span class="mdi mdi-account-multiple"></span> Users</b-nav-item>
+          <b-nav-item to="/stats" exact><span class="mdi mdi-chart-bar"></span> Stats</b-nav-item>
           <b-nav-item to="/users/add" exact><span class="mdi mdi-account-plus"></span> add User</b-nav-item>
           <b-nav-item to="/products/" exact><span class="mdi mdi-tag"></span> show Products</b-nav-item>
           <b-nav-item to="/products/add" exact><span class="mdi mdi-tag-plus"></span>add Product</b-nav-item>
@@ -18,8 +19,8 @@
       </b-collapse>
     </div>
     </b-navbar>
-    <div class="container">
-      <router-view v-bind:serverinfo="serverinfo" :key="$route.fullPath"></router-view>
+    <div class="container" id="container">
+        <router-view v-bind:serverinfo="serverinfo"></router-view>
     </div>
   </div>
 </template>
