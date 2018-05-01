@@ -1,5 +1,6 @@
 <template>
   <div id="show-user">
+    <div ref="pagetop"></div>
     <div v-show="loading" class="loading">
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
@@ -13,6 +14,7 @@
       Account recharged with <strong>{{ rechargeAmount | currency }}</strong>.
       Your new balance is: <strong>{{ user.balance | currency }}</strong>.
     </b-alert>
+
     <b-alert
       :show="buySuccess"
       variant="success"
@@ -23,6 +25,7 @@
       You bought a <strong>{{ rechargeAmount | currency }}</strong>.
       Your new balance is: <strong>{{ user.balance | currency }}</strong>.
     </b-alert>
+
     <b-alert
       :show="productError"
       variant="danger"
@@ -75,8 +78,8 @@
         </dl>
       </div>
       <div class="col-12 col-sm-4 text-center">
-        <b-img v-if="user.avatar != 0" class="img-fluid" style="max-width:150px; max-width:150px;" v-bind:src="'//localhost:8080/v3/images/' + user.avatar + '/img/'" />
-        <b-img v-if="user.avatar" class="img-fluid" style="max-width:150; max-width:150;" src="/src/assets/img/user.png" />
+        <b-img v-if="user.avatar" class="img-fluid" style="max-width:150px; max-width:150px;" v-bind:src="'//localhost:8080/v3/images/' + user.avatar + '/img/'" />
+        <b-img v-if="!user.avatar" class="img-fluid" style="max-width:150px; max-width:150px;" src="/src/assets/img/user.png" />
       </div>
     </div>
     <h2>Choose your poison</h2>
@@ -85,7 +88,9 @@
 
       <div v-for="product in products" v-bind:key="product.id" class="tm-item-container col-4 col-sm-3 col-md-2">
         <div class="tm-item" v-on:click="buyProduct(product.id, product.price)">
-          <b-img v-if="product.image" class="img-fluid" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" />
+          <div class="tm-item-img">
+            <b-img v-if="product.image" class="img-fluid" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" />
+          </div>
           <div class="name">
             {{ product.name }}
             <strong>
@@ -151,11 +156,14 @@ export default {
           this.rechargeSuccess = true;
           this.rechargeAmount = amount;
           this.user.balance += amount;
+          $("html, body").animate({
+            scrollTop: 0
+          }, 200);
         }
       });
     },
     buyProduct: function(product, price) {
-      console.log('buy product ' + product);
+      console.log('buy product ' + product);document.body
       this.buyPrice = price;
       this.$http.post('//localhost:8080/v3/users/' + this.user.id + '/buy/', {
         product: product,
@@ -173,9 +181,6 @@ export default {
     this.loading = true;
     this.$http.get('http://localhost:8080/v3/users/' + this.id, {timeout: 0}).then(function(data) {
       this.user = data.body;
-      // if (this.user.balance == 0) {
-      //   this.user.balance = "0" + this.server.decimal_separator + "00";
-      // }
       console.log(data.body.balance);
       this.userError = false;
       console.log(this.user);
@@ -194,9 +199,13 @@ export default {
       this.loading = false;
       console.log(data);
     });
-  }// if (this.user.balance == 0) {
-      //   this.user.balance = "0" + this.server.decimal_separator + "00";
-      // }
+  },
+  updated() {
+    console.log("updated");
+    var elem = document.getElementById("container");
+    console.log(elem);
+    elem.scrollTop = 0;
+  }
 }
 </script>
 

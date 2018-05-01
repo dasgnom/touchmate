@@ -89,7 +89,7 @@
     <div class="col-4 tm-productImage h-100 d-block">
       <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid rounded col-9 mx-auto d-block">
       <button v-if="product.image" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent="deleteImage()">Delete Picture</button>
-      <div v-if="!product.image" class="col-1 mx-auto d-block align-middle h-100 mt-4">
+      <div v-if="!product.image" class="text-center align-middle h-100 mt-4">
         <b-form-file v-on:input="saveImage()" id="productImage" v-model="image" class="form-control invisible" style="opacity: 0.0;"></b-form-file>
         <button v-if="!product.image" class="btn btn-secondary align-middle" v-on:click.prevent="chooseFiles()">Add Picture</button>
       </div>
