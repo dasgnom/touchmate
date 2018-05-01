@@ -1,26 +1,27 @@
 <template>
   <div id="app">
     <b-navbar toggleable="md" type="dark" variant="dark" class="mb-4" fixed="top">
-      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <div class="container">
-
-      <b-navbar-brand href="/#/">
-        <span class="mdi mdi-food"></span>
-        TouchMate
-      </b-navbar-brand>
-      <b-collapse is-nav id="nav_collapse">
-        <b-navbar-nav>
-          <b-nav-item to="/" exact><span class="mdi mdi-account-multiple"></span> Users</b-nav-item>
-          <b-nav-item to="/stats" exact><span class="mdi mdi-chart-bar"></span> Stats</b-nav-item>
-          <b-nav-item to="/users/add" exact><span class="mdi mdi-account-plus"></span> add User</b-nav-item>
-          <b-nav-item to="/products/" exact><span class="mdi mdi-tag"></span> show Products</b-nav-item>
-          <b-nav-item to="/products/add" exact><span class="mdi mdi-tag-plus"></span>add Product</b-nav-item>
-        </b-navbar-nav>
-      </b-collapse>
-    </div>
+        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+        <b-navbar-brand href="/#/">
+          <span class="mdi mdi-food"></span>
+          TouchMate
+        </b-navbar-brand>
+        <b-collapse is-nav id="nav_collapse">
+          <b-navbar-nav>
+            <b-nav-item to="/" exact><span class="mdi mdi-account-multiple"></span> Users</b-nav-item>
+            <b-nav-item to="/stats" exact><span class="mdi mdi-chart-bar"></span> Stats</b-nav-item>
+            <b-nav-item to="/products" exact><span class="mdi mdi-tag"></span> Products</b-nav-item>
+          </b-navbar-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item to="/products/add" v-if="$route.path==='/products' || /\/products\/?\d{0,6}/g.test($route.path)" exact><span class="mdi mdi-tag-plus"></span>add Product</b-nav-item>
+            <b-nav-item to="/users/add" v-if="$route.path==='/' || /\/\d{0,6}$/g.test($route.path)" exact><span class="mdi mdi-account-plus"></span> add User</b-nav-item>
+          </b-navbar-nav>
+        </b-collapse>
+      </div>
     </b-navbar>
     <div class="container" id="container">
-        <router-view v-bind:serverinfo="serverinfo"></router-view>
+      <router-view v-bind:serverinfo="serverinfo"></router-view>
     </div>
   </div>
 </template>
