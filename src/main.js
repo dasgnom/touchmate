@@ -1,4 +1,4 @@
-import '../node_modules/bootswatch/dist/darkly/bootstrap.css';
+import '../node_modules/bootswatch/dist/slate/bootstrap.css';
 import App from './App.vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 import moment from 'moment';
