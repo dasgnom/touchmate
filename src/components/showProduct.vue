@@ -4,14 +4,14 @@
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
     <h2 class="mb-4">edit {{ product.name }}</h2>
-    <form class="form" v-on:submit.prevent="updateProduct">
+    <form class="form" v-on:submit.prevent="updateProduct" v-on:keyup.enter="saveProduct()">
     <div class="row">
       <div class="col-8">
           <div class="row">
             <div class="col-12">
               <b-form-group
                 label="product id (readonly)"
-                description="show products id"
+                description="shows product's id"
               >
                 <b-form-input v-model="product.id" disabled class="bg-disabled text-black"></b-form-input>
               </b-form-group>
@@ -19,7 +19,7 @@
             <div class="col-12">
               <b-form-group
                 label="product name"
-                description="edit product's name"
+                description="product's name"
               >
                 <b-form-input v-model="product.name"></b-form-input>
               </b-form-group>
@@ -28,32 +28,33 @@
           <div class="row">
             <div class="col-12">
               <b-form-group
-                label="product price"
-                description="edit product's price"
+                label="price"
+                description="product's price"
               >
                 <b-input-group>
                   <b-input-group-text slot="prepend" v-if="serverinfo.currency_before">
-                    <span class="text-white">{{ serverinfo.currency }}</span>
+                    <span>{{ serverinfo.currency }}</span>
                   </b-input-group-text>
                   <b-form-input
                     placeholder="1.50"
-                    pattern="[0-9]+[.,][0-9]+"
+                    pattern="[0-9]+[.,][0-9]{2}"
                     required
                     v-model="product.price"
                     v-bind:value="product.price"
                   />
                   <b-input-group-text slot="append" v-if="!serverinfo.currency_before">
-                    <span class="text-white">{{ serverinfo.currency }}</span>
+                    <span>{{ serverinfo.currency }}</span>
                   </b-input-group-text>
                 </b-input-group>
               </b-form-group>
             </div>
+
           </div>
       </div>
 
     <div class="col-4 tm-productImage h-100 d-block">
       <img v-if="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid rounded col-9 mx-auto d-block">
-      <button v-if="product.image" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent="deleteImage()">Delete Picture</button>
+      <button v-if="product.image" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent.self="deleteImage()">Delete Picture</button>
       <div v-if="!product.image" class="text-center align-middle h-100 mt-4">
         <b-form-file v-on:input="saveImage()" id="productImage" v-model="image" class="form-control invisible" style="opacity: 0.0;"></b-form-file>
         <button v-if="!product.image" class="btn btn-secondary align-middle" v-on:click.prevent="chooseFiles()">Add Picture</button>
@@ -61,6 +62,14 @@
     </div>
   </div>
   <div class="row">
+    <div class="col-12">
+      <b-form-group
+        label="package size"
+        description="package size"
+      >
+        <b-form-input v-model="product.package_size"></b-form-input>
+      </b-form-group>
+    </div>
     <div class="col-12">
       <div class="row">
         <div class="col-6">
@@ -71,7 +80,7 @@
             <b-input-group>
                 <b-form-input v-model="product.energy" id="product_energy"/>
                 <b-input-group-text slot="append">
-                  <span class="text-white">{{ serverinfo.energy }} per 100g/ml</span>
+                  <span>{{ serverinfo.energy }} per 100g/ml</span>
                 </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -84,7 +93,7 @@
             <b-input-group>
                 <b-form-input v-model="product.sugar" id="product_sugar"/>
                 <b-input-group-text slot="append">
-                  <span class="text-white">g per 100g/ml</span>
+                  <span c>g per 100g/ml</span>
                 </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -103,7 +112,7 @@
             <b-input-group>
                 <b-form-input v-model="product.caffeine" id="product_caffeine"/>
                 <b-input-group-text slot="append">
-                  <span class="text-white">mg per 100g/ml</span>
+                  <span>mg per 100g/ml</span>
                 </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -116,7 +125,7 @@
             <b-input-group>
                 <b-form-input v-model="product.alcohol" id="product_alcohol"/>
                 <b-input-group-text slot="append">
-                  <span class="text-white">% by volume</span>
+                  <span>% by volume</span>
                 </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -168,6 +177,7 @@ export default {
         caffeine: this.product.caffeine,
         alcohol: this.product.alcohol,
         image: this.product.image,
+        package_size: this.product.package_size
       }).then(function(response) {
         console.log(response);
         this.$notify({
