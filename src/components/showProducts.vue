@@ -5,54 +5,59 @@
     </div>
     <h2 class="mb-4">Products</h2>
 
-    <b-alert :show="productsError" variant="danger" v-on:dblclick="showAlertDetails = !showAlertDetails">
-      <strong>Error:</strong> Unable to get product from your space market API. Please try again. If the error
-      persists, please contact the haxxor in charge!
-      <hr />
-      The server returned error code {{ productsStatus }} ({{ productsStatusMessage }}) together with the message: <br /> <em>{{ productsErrorMessage }}</em>.
-    </b-alert>
-    <div class="row" v-show="!productsError">
+    <div class="row">
       <table class="table table-hover table-striped">
-      <tr>
-        <th colspan="2">
-          Product
-        </th>
-        <th>
-          Price
-        </th>
-        <th>
-          Energy
-        </th>
-        <th>
-          Alcohol
-        </th>
-      </tr>
-      <tbody>
-
-      <tr v-for="product in products" v-bind:key="product.id">
-          <td>
-            <router-link :to="'/products/' + product.id">
-              <img v-show="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid" style="max-width: 80px;"/>
-              <img v-show="!product.image" src="/src/assets/img/user.png" class="img-fluid" style="max-width: 80px;"/>
-            </router-link>
-          </td>
-          <td>
-            <router-link :to="'/products/' + product.id">
-            {{ product.name }}
-            </router-link>
-          </td>
-          <td>
-            {{ product.price }}
-          </td>
-          <td>
-            {{ product.energy }}
-          </td>
-          <td>
-            {{ product.alcohol }}
-          </td>
-      </tr>
-    </tbody>
-    </table>
+        <tr>
+          <th colspan="2">
+            Product
+          </th>
+          <th>
+            Price
+          </th>
+          <th>
+            Package Size
+          </th>
+          <th>
+            Energy
+          </th>
+          <th>
+            Sugar
+          </th>
+          <th>
+            Alcohol
+          </th>
+        </tr>
+        <tbody>
+          <tr v-for="product in products" v-bind:key="product.id">
+              <td>
+                <router-link :to="'/products/' + product.id">
+                  <img v-show="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid" style="max-width: 80px;"/>
+                  <img v-show="!product.image" src="/src/assets/img/user.png" class="img-fluid" style="max-width: 80px;"/>
+                </router-link>
+              </td>
+              <td>
+                <router-link :to="'/products/' + product.id">
+                  {{ product.name }}
+                </router-link>
+              </td>
+              <td>
+                {{ product.price | currency(serverinfo.currency, serverinfo.currency_before, serverinfo.decimal_seperator) }}
+              </td>
+              <td>
+                {{ product.package_size }}
+              </td>
+              <td>
+                {{ product.energy | energy(serverinfo.energy) }}
+              </td>
+              <td>
+                {{ product.sugar | sugar(serverinfo.decimal_separator) }}
+              </td>
+              <td>
+                {{ product.alcohol | alcohol(serverinfo.decimal_seperator) }}
+              </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -65,12 +70,7 @@ export default {
     return {
       products: [],
       id: this.$route.params.id,
-      productsStatus: 0,
-      productsError: false,
-      productsStatusMessage: '',
-      productsErrorMessage: '',
       loading: true,
-      showAlertDetails: false,
     }
   },
   methods: {
@@ -80,17 +80,20 @@ export default {
     this.$http.get('http://localhost:8080/v3/products').then(function(data) {
       this.products = data.body[0];
       this.loading = false;
-      console.log("products loaded");
-      this.productsError = false;
     }, function(data) {
-      this.productsStatus = data.status;
-      this.productsError = true;
-      this.productsErrorMessage = data.body;
-      this.productsStatusMessage = data.statusText;
       this.loading = false;
-      console.log(data);
+      this.$notify(
+        {
+          type: 'error',
+          title: 'Error',
+          text: 'Unable to load products from your <em>space market api</em>. \
+          Please try again. If the error persists contact the haxxor in charge \
+          The server returned the error code <strong>' + data.status + '</strong>',
+          duration: -1,
+        }
+      );
     });
-  }
+  },
 }
 </script>
 

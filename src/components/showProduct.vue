@@ -4,41 +4,6 @@
       <span class="mdi mdi-spin mdi-loading"></span>
     </div>
     <h2 class="mb-4">edit {{ product.name }}</h2>
-    <b-alert
-      v-if="productError"
-      bg-variant="danger"
-      text-variant="white"
-      >
-        <strong>Error:</strong> Unable to get the product from your space market API. Please try again. If the error
-        persists, please contact the haxxor in charge!
-    </b-alert>
-    <b-alert
-      :show="imageDeleteError"
-      variant="danger"
-      class="mb-4 mt-4"
-      dismissible
-      @dismissed="imageDeleteError=false"
-      >
-        <strong>Error:</strong> An error occured while deleting the image.
-    </b-alert>
-    <b-alert
-      :show="updateSuccess"
-      variant="success"
-      class="mb-4 mt-4"
-      dismissible
-      @dismissed="updateSuccess=false"
-    >
-      Product updated
-    </b-alert>
-    <b-alert
-      :show="imageAddSuccess"
-      variant="success"
-      class="mb-4 mt-4"
-      dismissible
-      @dismissed="imageAddSuccess=false"
-    >
-      Image added
-    </b-alert>
     <form class="form" v-on:submit.prevent="updateProduct">
     <div class="row">
       <div class="col-8">
@@ -174,14 +139,9 @@ export default {
       product: {},
       pid: this.$route.params.pid,
       productStatus: 0,
-      productError: false,
-      imageDeleteError: false,
       loading: true,
       server: {},
       image: null,
-      updateSuccess: false,
-      imageUpdateSuccess: false,
-      imageAddSuccess: false,
     }
   },
   methods: {
@@ -214,6 +174,7 @@ export default {
           type: 'success',
           title: 'Success',
           text: '<strong>' + this.product.name + '</strong> updated.',
+          duration: 5000,
         });
       }, function(response) {
         console.log(response);

@@ -52,6 +52,40 @@ Vue.filter('currency', (value, currency = '€', currency_before = false, decima
   return `${formated} ${currency}`;
 });
 
+Vue.filter('alcohol', (value, decimal_separator = ',') => {
+  let formated = '';
+  let val = value;
+
+  if (!val) {
+    val = `00`;
+  } else if (val.toString().length === 1) {
+    val = `0${val}`;
+  }
+  formated = val.toString().slice(0, -1);
+  formated += decimal_separator;
+  formated += val.toString().substr(-1, 2);
+
+  return `${formated} vol.%`;
+});
+
+Vue.filter('sugar', (value, decimal_separator = ',') => {
+  let formated = '';
+  let val = value;
+
+  if (!val) {
+    val = `00`;
+  } else if (val.toString().length === 1) {
+    val = `0${val}`;
+  }
+  formated = val.toString().slice(0, -1);
+  formated += decimal_separator;
+  formated += val.toString().substr(-1, 2);
+
+  return `${formated} g / 100 g or ml`;
+});
+
+Vue.filter('energy', (value, unit = 'kcal') => `${value} ${unit}/100 g or ml`);
+
 // VueRouter
 const router = new VueRouter({
   mode: 'history',
