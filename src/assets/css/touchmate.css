@@ -34,3 +34,7 @@ div.tm-item div.name strong {
 body {
   padding-top: 90px;
 }
+
+.notifications .vue-notification {
+  font-size: 1.25em;
+}

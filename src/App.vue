@@ -21,6 +21,7 @@
       </div>
     </b-navbar>
     <div class="container" id="container">
+      <notifications position="top center" width="60%" duration="7"></notifications>
       <router-view v-bind:serverinfo="serverinfo"></router-view>
     </div>
   </div>

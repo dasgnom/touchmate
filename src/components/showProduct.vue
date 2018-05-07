@@ -210,7 +210,11 @@ export default {
         image: this.product.image,
       }).then(function(response) {
         console.log(response);
-        this.updateSuccess = true;
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: '<strong>' + this.product.name + '</strong> updated.',
+        });
       }, function(response) {
         console.log(response);
       });
