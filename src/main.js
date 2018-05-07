@@ -25,7 +25,7 @@ Vue.use(BootstrapVue);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(Notifications);
-Vue.use(VueConfig, config)
+Vue.use(VueConfig, config);
 
 Vue.prototype.moment = moment;
 Vue.prototype.momentTimezone = momentTimezone;
