@@ -17,7 +17,6 @@
 </template>
 
 <script>
-
 export default {
   data () {
     return {
@@ -27,14 +26,17 @@ export default {
   methods: {
   },
   mounted() {
-    this.$http.get('http://localhost:8080/v3/users').then(function(data) {
+    this.$http.get('http://localhost:8080/v3/users').then(data => {
       this.users = data.body;
-      console.log(data);
+    }, response => {
+      this.$notify({
+        type: 'error',
+        title: 'Error',
+        text: 'Unable to load user list from API. Please try again. If the \
+               error persists, please contact your Haxxor in charge.',
+        duration: -1,
+      })
     });
   }
 }
 </script>
-
-<style>
-
-</style>
