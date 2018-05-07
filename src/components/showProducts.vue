@@ -77,7 +77,8 @@ export default {
   },
   mounted() {
     this.loading = true;
-    this.$http.get('http://localhost:8080/v3/products').then(function(data) {
+    console.log(this.$config);
+    this.$http.get(this.$config.api_url + '/products').then(function(data) {
       this.products = data.body[0];
       this.loading = false;
     }, function(data) {

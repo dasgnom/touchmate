@@ -6,26 +6,26 @@ import momentTimezone from 'moment-timezone';
 import Notifications from 'vue-notification';
 import Routes from './routes';
 import Vue from 'vue';
+import VueConfig from 'vue-config';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 
-// const options = {
-//   toast: {
-//     position: SnotifyPosition.rightTop,
-//     backdrop: -1,
-//     pauseOnHover: true,
-//     closeOnClick: true,
-//     timeout: 7000,
-//     showProgressBar: true,
-//   },
-// };
+const defaultConfig = require('./config');
+let localConfig;
+
+try {
+  localConfig = require('./config_local');
+} catch (e) {
+  localConfig = {};
+}
+
+const config = { ...defaultConfig, ...localConfig };
 
 Vue.use(BootstrapVue);
 Vue.use(VueResource);
 Vue.use(VueRouter);
-// Vue.use(Snotify, options);
-// Vue.use(SnotifyPosition);
 Vue.use(Notifications);
+Vue.use(VueConfig, config)
 
 Vue.prototype.moment = moment;
 Vue.prototype.momentTimezone = momentTimezone;
