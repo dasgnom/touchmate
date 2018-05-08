@@ -1,6 +1,7 @@
 import '../node_modules/bootswatch/dist/slate/bootstrap.css';
 import App from './App.vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
+import Crypto from 'crypto';
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 import Notifications from 'vue-notification';
@@ -85,6 +86,31 @@ Vue.filter('sugar', (value, decimal_separator = ',') => {
 });
 
 Vue.filter('energy', (value, unit = 'kcal') => `${value} ${unit}/100 g or ml`);
+
+Vue.filter(
+  'datetime',
+  (
+    value,
+    timezone_api = config.timezone_api,
+    timezone_client = config.timezone_client,
+    datetimeformat = config.datetimeformat
+  ) =>
+    moment
+      .tz(value, timezone_api)
+      .tz(timezone_client)
+      .format(datetimeformat)
+);
+
+Vue.filter(
+  'gravatar',
+  (email, size = config.gravatar.size, fallback = config.gravatar.fallback, rating = config.gravatar.rating) => {
+    const hash = Crypto.createHash('md5')
+      .update(email)
+      .digest('hex');
+
+    return `${config.gravatar.base_url}${hash}?s=${size}&d=${fallback}&r=${rating}`;
+  }
+);
 
 // VueRouter
 const router = new VueRouter({
