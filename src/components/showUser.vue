@@ -124,9 +124,7 @@
 </template>
 
 <script>
-import currency from '../mixins/currency';
 export default {
-  mixins: [currency],
   props: ['serverinfo'],
   data() {
     return {
@@ -138,8 +136,6 @@ export default {
       userError: undefined,
       userStatus: 0,
       loading: true,
-      rechargeSuccess: false,
-      rechargeAmount: false,
       buySuccess: false,
       buyPrice: false,
       server: {
@@ -151,7 +147,6 @@ export default {
   },
   mounted() {
     this.fetchUser();
-
     this.$http.get('http://localhost:8080/v3/products').then(
       data => {
         this.products = data.body[0];
@@ -166,13 +161,16 @@ export default {
     );
   },
   methods: {
-    fetchUser() {
+    fetchUser(notification=false) {
       this.loading = true;
       this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
         data => {
           this.user = data.body;
           console.log(data.body.balance);
           console.log(this.user);
+          if (notification !== false) {
+            this.$notify(notification);
+          }
         },
         data => {
           this.$notify({});
@@ -181,7 +179,6 @@ export default {
       this.loading = false;
     },
     rechargeAccount(amount) {
-      console.log(`recharge account with amount: ${amount}`);
       this.$http
         .post(`${this.$config.api_url}/users/${this.user.id}/deposit/`, {
           amount,
@@ -189,13 +186,14 @@ export default {
         .then(response => {
           console.log(response);
           if (response.status === 204) {
-            this.$notify({
+            var notification = {
               type: 'success',
               title: 'Success',
-              text: `Your recharged your account with ${currency(amount)}`,
-            });
-            this.fetchUser();
-            console.log(currency(amount));
+              text: `Your recharged your account with ${amount}. Your new balance is: ${this.user.balance}`,
+            };
+            this.fetchUser(notification);
+            var amountFormated = (amount);
+            this.user.redirect ? this.$router.push('/') : false;
           }
         });
     },
