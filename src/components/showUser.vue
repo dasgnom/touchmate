@@ -124,6 +124,7 @@
 </template>
 
 <script>
+import TouchMate from '../modules/touchmate';
 export default {
   props: ['serverinfo'],
   data() {
@@ -189,10 +190,9 @@ export default {
             var notification = {
               type: 'success',
               title: 'Success',
-              text: `Your recharged your account with ${amount}. Your new balance is: ${this.user.balance}`,
+              text: `Your recharged your account with ${TouchMate.currency(amount, this.serverinfo.currency, this.serverinfo.currency_before, this.server.decimal_separator)}. Your new balance is: ${TouchMate.currency(this.user.balance+amount, this.serverinfo.currency, this.serverinfo.currency_before, this.server.decimal_separator)}`,
             };
             this.fetchUser(notification);
-            var amountFormated = (amount);
             this.user.redirect ? this.$router.push('/') : false;
           }
         });
