@@ -52,6 +52,7 @@
           v-if="!user.avatar && $config.gravatar.use"
           :src="user.email | gravatar"
           class="img-fluid"
+          onerror="this.src='/src/assets/img/user.png'"
           style="max-width:150px; max-width:150px;" />
       </div>
     </div>
@@ -174,7 +175,11 @@ export default {
           }
         },
         data => {
-          this.$notify({});
+          this.$notify({
+            type: 'error',
+            text: 'Failed to load user from API.',
+            title: 'Error',
+          });
         }
       );
       this.loading = false;
