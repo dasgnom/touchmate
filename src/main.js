@@ -6,6 +6,7 @@ import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 import Notifications from 'vue-notification';
 import Routes from './routes';
+import TouchMate from './modules/touchmate';
 import Vue from 'vue';
 import VueConfig from 'vue-config';
 import VueResource from 'vue-resource';
@@ -31,27 +32,9 @@ Vue.use(VueConfig, config);
 Vue.prototype.moment = moment;
 Vue.prototype.momentTimezone = momentTimezone;
 
-Vue.filter('currency', (value, currency = '€', currency_before = false, decimal_separator = ',') => {
-  let formated = '';
-  let val = value;
-
-  if (!val) {
-    val = `000`;
-  } else if (val.toString().length === 1) {
-    val = `00${val}`;
-  } else if (val.toString().length === 2) {
-    val = `0${val}`;
-  }
-  formated = val.toString().slice(0, -2);
-  formated += decimal_separator;
-  formated += val.toString().substr(-2, 2);
-
-  if (currency_before) {
-    return `${currency}${formated}`;
-  }
-
-  return `${formated} ${currency}`;
-});
+Vue.filter('currency', (value, currency = '€', currency_before = false, decimal_separator = ',') =>
+  TouchMate.currency(value, currency, currency_before, decimal_separator)
+);
 
 Vue.filter('alcohol', (value, decimal_separator = ',') => {
   let formated = '';
@@ -104,8 +87,13 @@ Vue.filter(
 Vue.filter(
   'gravatar',
   (email, size = config.gravatar.size, fallback = config.gravatar.fallback, rating = config.gravatar.rating) => {
+    let mail = '';
+
+    if (email == null) {
+      mail = '';
+    }
     const hash = Crypto.createHash('md5')
-      .update(email)
+      .update(mail)
       .digest('hex');
 
     return `${config.gravatar.base_url}${hash}?s=${size}&d=${fallback}&r=${rating}`;

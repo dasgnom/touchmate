@@ -14,7 +14,7 @@
               Balance
             </strong>
           </dt>
-          <dd class="lead">
+          <dd class="lead" v-bind:class="{ 'text-danger': user.balance < 0, 'text-success': user.balance >= 1000, 'text-warning': 0 <= user.balance && user.balance < 500  }">
             {{ user.balance | currency }}
           </dd>
           <dt v-show="$config.privacy.user_email && user.email">
@@ -185,7 +185,6 @@ export default {
           amount,
         })
         .then(response => {
-          console.log(response);
           if (response.status === 204) {
             var notification = {
               type: 'success',
@@ -203,7 +202,18 @@ export default {
           product: product.id,
         })
         .then(
-          response => {},
+          response => {
+            if (response.status === 204) {
+              var notification = {
+                type: 'success',
+                title: 'Success',
+                text: `You bought a ${product.name} for ${TouchMate.currency(product.price, this.serverinfo.currency, this.serverinfo.currency_before, this.server.decimal_separator)}. \
+                       Your new balance is: ${TouchMate.currency(this.user.balance-product.price, this.serverinfo.currency, this.serverinfo.currency_before, this.server.decimal_separator)}`,
+              };
+              this.fetchUser(notification);
+              this.user.redirect ? this.$router.push('/') : false;
+            }
+          },
           response => {
             this.$notify({
               title: 'Error',

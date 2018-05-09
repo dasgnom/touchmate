@@ -1,6 +1,8 @@
-const currency = function(value, currency, currency_before, decimal_separator) {
+/* eslint-disable */
+var currency = function(value, currency, currency_before, decimal_separator) {
   let formated = '';
-  let val = value;
+  let val = Math.abs(value);
+  let negative = '';
 
   if (!val) {
     val = `000`;
@@ -13,11 +15,18 @@ const currency = function(value, currency, currency_before, decimal_separator) {
   formated += decimal_separator;
   formated += val.toString().substr(-2, 2);
 
+  if (value < 0) {
+    negative = '-';
+  }
+
+  formated = `${negative}${formated}`;
+
   if (currency_before) {
     return `${currency}${formated}`;
   }
 
   return `${formated} ${currency}`;
 };
+/* eslint-enable */
 
 exports.currency = currency;
