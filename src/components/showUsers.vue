@@ -8,17 +8,16 @@
             v-if="user.avatar"
             :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
             class="img-fluid"
-            style="max-width:150px; max-width:150px;" />
+            style="max-width:150px; max-height:150px;" />
           <b-img
             v-if="!user.avatar && !$config.gravatar.use"
             class="img-fluid"
-            style="max-width:150px; max-width:150px;" />
+            style="max-width:150px; max-height:150px;" />
           <b-img
             v-if="!user.avatar && $config.gravatar.use"
             src="/src/assets/img/user.png"
             :src="user.email | gravatar"
             class="img-fluid"
-            style="max-width:150px; max-width:150px;"
             onerror="this.src='/src/assets/img/user.png'" />
           <div class="name">
             {{ user.name }}

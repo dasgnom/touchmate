@@ -87,13 +87,11 @@ Vue.filter(
 Vue.filter(
   'gravatar',
   (email, size = config.gravatar.size, fallback = config.gravatar.fallback, rating = config.gravatar.rating) => {
-    let mail = '';
-
     if (email == null) {
-      mail = '';
+      return '/src/assets/img/user.png';
     }
     const hash = Crypto.createHash('md5')
-      .update(mail)
+      .update(email)
       .digest('hex');
 
     return `${config.gravatar.base_url}${hash}?s=${size}&d=${fallback}&r=${rating}`;
