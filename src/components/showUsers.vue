@@ -2,16 +2,15 @@
   <div id="show-users">
     <h2 class="mb-4">Users</h2>
     <div class="row">
-      <div class="col-12 mb-3">
-          <ul class="pagination pagination justify-content-center col-12" style="overflow-wrap: break-word !important;">
-            <li class="page-item" v-bind:class="{ active: sterm === '' }">
-              <a class="page-link" v-on:click="sterm=''">all</a>
-            </li>
-            <li class="page-item" v-for="letter in searchletters" v-bind:key="letter" v-bind:class="{ active: letter === sterm }">
-              <a class="page-link" v-on:click="sterm=letter" v-if="letter !== 'all'">{{ letter }}</a>
-              <a class="page-link" v-on:click="sterm=''" v-if="letter === 'all'">{{ letter }}</a>
-            </li>
-          </ul>
+      <div class="col-12 mb-3 text-center">
+          <!-- <ul class="pagination"> -->
+            <!-- <li class="page-item" v-bind:class="{ active: sterm === '' }"> -->
+              <span><a class="btn" v-on:click="sterm=''">all</a></span>
+              <span v-for="letter in searchletters"><a class="btn" v-bind:class="{ 'btn-secondary': letter === sterm }" v-on:click="sterm=letter">{{ letter }}</a>&nbsp;</span>
+            <!-- </li> -->
+            <!-- <li class="page-item" v-for="letter in searchletters" v-bind:key="letter" v-bind:class="{ active: letter === sterm }"> -->
+            <!-- </li> -->
+          <!-- </ul> -->
       </div>
     </div>
     <div class="row">
@@ -45,7 +44,7 @@ export default {
   data () {
     return {
       users: [],
-      searchletters: '#abcdefghijklmnopqrstuvwxyz'.split(''),
+      searchletters: ['#', 'abc', 'def', 'ghi','jkl', 'mno', 'pqr', 'stuv', 'wxyz'],
       sterm: '',
     }
   },
@@ -69,8 +68,10 @@ export default {
       return this.users.filter((user) => {
         if (this.sterm === '#') {
           var regex = new RegExp('^[^a-z]', 'i');
+        } else if (this.sterm === '') {
+          var regex = new RegExp('^', 'i');
         } else {
-          var regex = new RegExp('^' + this.sterm, 'i');
+          var regex = new RegExp('^[' + this.sterm + ']', 'i');
         }
         console.log(regex);
         return user.name.match(regex);
