@@ -38,6 +38,7 @@
           <span class="onoffswitch-switch"></span>
         </label>
       </div>
+      <small>Defines whether a user is active or not (no effect, yet)</small>
     </div>
   </div>
   <div class="row mt-2">
@@ -52,6 +53,7 @@
           <span class="onoffswitch-switch"></span>
         </label>
       </div>
+      <small>Redirect to the start page after any transaction (eg. recharge your account or buy something).</small>
     </div>
   </div>
   <div class="row mt-2 mb-3">
@@ -66,6 +68,7 @@
           <span class="onoffswitch-switch"></span>
         </label>
       </div>
+      <small>Do you want your transactions being logged, along with your user name? If not, your transaction will be logged as anonymous.</small>
     </div>
   </div>
   <button class="btn btn-primary" v-on:click.prevent="saveUser">Save User</button>
