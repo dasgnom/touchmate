@@ -143,8 +143,6 @@ export default {
   },
   methods: {
     saveProduct: function(e) {
-      console.log(this.product.price.replace(",", "").replace(".", ""));
-      console.log(this.product.name);
       this.$http.post('//localhost:8080/v3/products/', {
         name: this.product.name,
         price: this.product.price.replace(",", "").replace(".", ""),
@@ -153,12 +151,8 @@ export default {
         caffeine: this.product.caffeine,
         alcohol: this.product.alcohol,
       }).then(response => {
-        console.log("product posted");
-        console.log(response);
-        console.log(response.status);
         this.$router.push("/products/" + response.body.id);
       }, response => {
-        console.log(response);
         if (response.status != 0) {
           this.resp.error = true;
           var message = response.body;

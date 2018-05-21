@@ -41,12 +41,9 @@ export default {
   },
   created() {
     this.$http.get('//localhost:8080/v3/users/stats/').then(response => {
-      console.log(response);
-      console.log(response.status);
       this.stats = response.body;
     //  window.location = "/#/users/" + response.body.id;
     }, response => {
-      console.log(response);
       if (response.status != 0) {
         this.resp.error = true;
         var message = response.body;

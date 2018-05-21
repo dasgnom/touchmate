@@ -96,7 +96,6 @@ export default {
   methods: {
     saveUser: function() {
       if (this.user.name == undefined) {
-        console.log('Bitte alles ausfuellen.');
         this.$notify({
           title: 'Error',
           text: 'Please choose a user name.',
@@ -111,8 +110,6 @@ export default {
         redirect: this.user.redirect,
         audit: this.user.audit,
       }).then(response => {
-        console.log(response);
-        console.log(response.status);
         this.$notify({
           type: 'success',
           text: 'User <strong>' + this.user.name + '</strong> created.',
@@ -120,7 +117,6 @@ export default {
         });
         this.$router.push('/users/' + response.body.id + '/edit/');
       }, response => {
-        console.log(response);
         if (response.status != 0) {
           this.$notify({
             type: 'error',

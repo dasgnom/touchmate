@@ -89,11 +89,14 @@ export default {
   beforeMount() {
     this.$http.get('//localhost:8080/v3/info').then(
       function(data) {
-        console.log(data);
         this.serverinfo = data.body;
       },
       data => {
-        console.log(data);
+        this.$notify({
+          title: 'Error',
+          type: 'error',
+          text: 'Unable to load server informations from Server.',
+        });
       }
     );
   },

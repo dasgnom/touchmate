@@ -3,14 +3,8 @@
     <h2 class="mb-4">Users</h2>
     <div class="row">
       <div class="col-12 mb-3 text-center">
-          <!-- <ul class="pagination"> -->
-            <!-- <li class="page-item" v-bind:class="{ active: sterm === '' }"> -->
-              <span><a class="btn" v-on:click="sterm=''">all</a></span>
-              <span v-for="letter in searchletters"><a class="btn" v-bind:class="{ 'btn-secondary': letter === sterm }" v-on:click="sterm=letter">{{ letter }}</a>&nbsp;</span>
-            <!-- </li> -->
-            <!-- <li class="page-item" v-for="letter in searchletters" v-bind:key="letter" v-bind:class="{ active: letter === sterm }"> -->
-            <!-- </li> -->
-          <!-- </ul> -->
+        <span><a class="btn" v-on:click="sterm=''">all</a></span>
+        <span v-for="letter in searchletters"><a class="btn" v-bind:class="{ 'btn-secondary': letter === sterm }" v-on:click="sterm=letter">{{ letter }}</a>&nbsp;</span>
       </div>
     </div>
     <div class="row">
@@ -50,7 +44,6 @@ export default {
   },
   methods: {},
   mounted() {
-    console.log(`${this.$config.api_url}users`);
     this.$http.get(`${this.$config.api_url}users`).then(data => {
       this.users = data.body;
     }, response => {
@@ -73,7 +66,6 @@ export default {
         } else {
           var regex = new RegExp('^[' + this.sterm + ']', 'i');
         }
-        console.log(regex);
         return user.name.match(regex);
       });
     }

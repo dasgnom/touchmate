@@ -158,13 +158,9 @@ export default {
       document.getElementById("productImage").click();
     },
     deleteImage: function() {
-      console.log('Delete Image');
-      console.log(this.product.image);
       this.$http.delete('//localhost:8080/v3/images/' + this.product.image + '/').then( response => {
-        console.log('image ' +  this.product.image + ' deleted');
         this.product.image = "";
       }, response => {
-        console.log(response);
         this.imageDeleteError = true;
       });
     },
@@ -184,7 +180,6 @@ export default {
         alcohol: TouchMate.stripComma(this.product.alcohol),
         package_size: this.product.package_size,
       }).then(function(response) {
-        console.log(response);
         this.$notify({
           type: 'success',
           title: 'Success',
@@ -192,20 +187,15 @@ export default {
           duration: 5000,
         });
       }, function(response) {
-        console.log(response);
       });
     },
     updateProduct: function() {
-      console.log("updating product")
       this.saveProduct();
     },
     saveImage: function() {
-      console.log('add image');
       const formData = new FormData();
-      console.log(this.image);
       formData.append('image', this.image);
       this.$http.post(`${this.$config.api_url}images/`, formData).then( response => {
-        console.log(response);
         this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
           image: response.body.id,
         }).then( response => {
@@ -216,20 +206,16 @@ export default {
             this.product.sugar = TouchMate.decimalValue(this.product.sugar, this.serverinfo.decimal_separator, 1);
             this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
           }
-          console.log(response);
         }, response => {
           this.productError = true;
-          console.log(response);
         });
       }, response => {
-        console.log(response);
       })
     },
     loadProduct: function() {
       this.loading = true;
       this.$http.get(`${this.$config.api_url}products/` + this.pid + '/').then(function(data) {
         this.product = data.body;
-        console.log(this.serverinfo);
         this.productError = false;
         this.loading = false;
         if (this.serverinfo.decimal_separator != undefined) {

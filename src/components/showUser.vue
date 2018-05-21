@@ -168,8 +168,6 @@ export default {
       this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
         data => {
           this.user = data.body;
-          console.log(data.body.balance);
-          console.log(this.user);
           if (notification !== false) {
             this.$notify(notification);
           }

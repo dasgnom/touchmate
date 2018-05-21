@@ -92,7 +92,6 @@ export default {
   },
   mounted() {
     this.loading = true;
-    console.log(this.$config);
     this.$http.get(this.$config.api_url + '/products').then(function(data) {
       this.products = data.body[0];
       this.loading = false;

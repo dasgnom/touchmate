@@ -151,52 +151,37 @@ export default {
     }
   },
   mounted() {
-    console.log("user loaded");
     this.fetchUser();
   },
   methods: {
     deleteUser: function(event) {
-      console.log('delete user');
       this.$http.delete(`${this.$config.api_url}users/${this.user.id}/`).then( response => {
-        console.log(response);
-        console.log('user deleted');
         this.$notify({
           type: 'success',
           title: 'Success',
           text: 'User deleted',
         }, response => {
-          console.log(response);
         });
         this.$router.push('/');
       });
     },
     deleteImage: function() {
-      console.log('Delete Image');
-      console.log(this.user.avatar);
       this.$http.delete('//localhost:8080/v3/images/' + this.user.avatar + '/').then( response => {
-        console.log('image ' +  this.user.avatar + ' deleted');
         this.user.avatar = "";
       }, response => {
-        console.log(response);
       });
     },
     saveImage: function() {
-      console.log('add image');
       const formData = new FormData();
-      console.log(this.image);
       formData.append('image', this.image);
       this.$http.post('//localhost:8080/v3/images/', formData).then( response => {
-        console.log(response);
         this.$http.patch('//localhost:8080/v3/users/' + this.user.id.toString() + '/', {
           avatar: response.body.id,
         }).then( response => {
           this.user = response.body;
-          console.log(response);
         }, response => {
-          console.log(response);
         });
       }, response => {
-        console.log(response);
       })
     },
     chooseFiles: function() {
@@ -207,8 +192,6 @@ export default {
       this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
         data => {
           this.user = data.body;
-          console.log(data.body.balance);
-          console.log(this.user);
           if (notification !== false) {
             this.$notify(notification);
           }
@@ -224,7 +207,6 @@ export default {
     },
     saveUser: function() {
       if (this.user.name == undefined) {
-        console.log('Bitte alles ausfuellen.');
         this.$notify({
           title: 'Error',
           text: 'Please choose a user name.',
@@ -239,15 +221,12 @@ export default {
         redirect: this.user.redirect,
         audit: this.user.audit,
       }).then(response => {
-        console.log(response);
-        console.log(response.status);
         this.$notify({
           type: 'success',
           text: 'User <strong>' + this.user.name + '</strong> updated.',
           title: 'Success',
         });
       }, response => {
-        console.log(response);
         if (response.status != 0) {
           this.$notify({
             type: 'error',
