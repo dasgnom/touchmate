@@ -39,7 +39,7 @@
           <span class="onoffswitch-switch"></span>
         </label>
       </div>
-      <small>Defines wether a user is active or not (no effect, yet)</small>
+      <small>Defines whether a user is active or not (no effect, yet)</small>
     </div>
   </div>
   <div class="row mt-2">
