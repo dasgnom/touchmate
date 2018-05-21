@@ -91,7 +91,7 @@
             description="sugar in g per 100ml/g"
           >
             <b-input-group>
-                <b-form-input v-model="product.sugar" id="product_sugar" pattern="[0-9]+[.,][0-9]{1}"/>
+                <b-form-input v-model="product.sugar" id="product_sugar" pattern="(0)|([0-9]+[.,][0-9]{1})"/>
                 <b-input-group-text slot="append">
                   <span>g per 100g/ml</span>
                 </b-input-group-text>
@@ -169,6 +169,12 @@ export default {
       });
     },
     saveProduct: function() {
+      if (this.product.energy === '') {
+        this.product.energy = null;
+      }
+      if (this.product.caffeine === '') {
+        this.product.caffeine = null;
+      }
       this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
         name: this.product.name,
         price: TouchMate.stripComma(this.product.price),
@@ -176,7 +182,6 @@ export default {
         sugar: TouchMate.stripComma(this.product.sugar),
         caffeine: this.product.caffeine,
         alcohol: TouchMate.stripComma(this.product.alcohol),
-        image: this.product.image,
         package_size: this.product.package_size,
       }).then(function(response) {
         console.log(response);
@@ -206,6 +211,11 @@ export default {
         }).then( response => {
           this.imageAddSuccess = true;
           this.product = response.body;
+          if (this.serverinfo.decimal_separator != undefined) {
+            this.product.price = TouchMate.decimalValue(this.product.price, this.serverinfo.decimal_separator);
+            this.product.sugar = TouchMate.decimalValue(this.product.sugar, this.serverinfo.decimal_separator, 1);
+            this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
+          }
           console.log(response);
         }, response => {
           this.productError = true;

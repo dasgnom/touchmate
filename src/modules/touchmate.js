@@ -28,7 +28,7 @@ var currency = function(value, currency, currency_before, decimal_separator) {
 };
 
 var stripComma = function(value) {
-  if (stripComma === null) {
+  if (value === '') {
     return null;
   } else if (typeof value === 'string') {
     return value.replace(",", "").replace(".", "");
@@ -43,8 +43,8 @@ var decimalValue = function(value, decimalSeperator, places=2) {
   let negative = '';
 
   if (places === 2) {
-    if (!val) {
-      val = `000`;
+    if (val === '') {
+      return null;
     } else if (val.toString().length === 1) {
       val = `00${val}`;
     } else if (val.toString().length === 2) {
@@ -54,8 +54,8 @@ var decimalValue = function(value, decimalSeperator, places=2) {
     formated += decimalSeperator;
     formated += val.toString().substr(-2, 2);
   } else {
-    if (!val) {
-      val = `00`;
+    if (val === '') {
+      return null;
     } else if (val.toString().length === 1) {
       val = `0${val}`;
     }

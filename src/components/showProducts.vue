@@ -47,13 +47,28 @@
                 {{ product.package_size }}
               </td>
               <td>
-                {{ product.energy | energy(serverinfo.energy) }}
+                <span v-if="product.energy !== null">
+                  {{ product.energy | energy(serverinfo.energy) }}
+                </span>
+                <span v-if="product.energy === null">
+                  ---
+                </span>
               </td>
               <td>
-                {{ product.sugar | sugar(serverinfo.decimal_separator) }}
+                <span v-if="product.sugar !== null">
+                  {{ product.sugar | sugar(serverinfo.decimal_separator) }}
+                </span>
+                <span v-if="product.sugar === null">
+                  ---
+                </span>
               </td>
               <td>
-                {{ product.alcohol | alcohol(serverinfo.decimal_seperator) }}
+                <span v-if="product.alcohol !== null">
+                  {{ product.alcohol | alcohol(serverinfo.decimal_seperator) }}
+                </span>
+                <span v-if="product.alcohol === null">
+                  ---
+                </span>
               </td>
           </tr>
         </tbody>
