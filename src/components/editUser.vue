@@ -106,7 +106,25 @@
       You can delete your user, with immediat effect. Once your account was delete it's
       impossible to restore it. <strong>Be careful!</strong>
     </p>
-    <button class="btn btn-md btn-danger">Delete User</button>
+    <div>
+      <b-btn v-b-modal.modal-delUser class="btn-danger">Delete User</b-btn>
+
+      <!-- Modal Component -->
+      <b-modal
+        id="modal-delUser"
+        header-bg-variant="danger"
+        header-text-variant="light"
+        body-text-variant="danger"
+        ok-variant="danger"
+        ok-title="Delete!"
+        cancel-varian="secondary"
+        lazy
+        @ok="deleteUser"
+        centered title="Delete User?">
+        <p class="my-4">Are you sure you wanna delete this user? This process can't be reverted.</p>
+      </b-modal>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -137,6 +155,21 @@ export default {
     this.fetchUser();
   },
   methods: {
+    deleteUser: function(event) {
+      console.log('delete user');
+      this.$http.delete(`${this.$config.api_url}users/${this.user.id}/`).then( response => {
+        console.log(response);
+        console.log('user deleted');
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'User deleted',
+        }, response => {
+          console.log(response);
+        });
+        this.$router.push('/');
+      });
+    },
     deleteImage: function() {
       console.log('Delete Image');
       console.log(this.user.avatar);
