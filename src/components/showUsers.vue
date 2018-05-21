@@ -2,17 +2,29 @@
   <div id="show-users">
     <h2 class="mb-4">Users</h2>
     <div class="row">
-      <div class="col-4 col-sm-3 col-md-2 tm-item-container" v-for="user in users" v-bind:key="user.id">
+      <div class="col-12 mb-3">
+          <ul class="pagination pagination justify-content-center col-12" style="overflow-wrap: break-word !important;">
+            <li class="page-item" v-bind:class="{ active: sterm === '' }">
+              <a class="page-link" v-on:click="sterm=''">all</a>
+            </li>
+            <li class="page-item" v-for="letter in searchletters" v-bind:key="letter" v-bind:class="{ active: letter === sterm }">
+              <a class="page-link" v-on:click="sterm=letter" v-if="letter !== 'all'">{{ letter }}</a>
+              <a class="page-link" v-on:click="sterm=''" v-if="letter === 'all'">{{ letter }}</a>
+            </li>
+          </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4 col-sm-3 col-md-2 tm-item-container" v-for="user in filteredUsers" v-bind:key="user.id">
         <div class="tm-item" v-on:click="$router.push(`users/${user.id}`)">
           <b-img
             v-if="user.avatar"
             :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
-            class="img-fluid"
-            style="max-width:150px; max-height:150px;" />
+            class="img-fluid" />
           <b-img
             v-if="!user.avatar && !$config.gravatar.use"
             class="img-fluid"
-            style="max-width:150px; max-height:150px;" />
+            src="/src/assets/img/user.png" />
           <b-img
             v-if="!user.avatar && $config.gravatar.use"
             src="/src/assets/img/user.png"
@@ -33,12 +45,14 @@ export default {
   data () {
     return {
       users: [],
+      searchletters: '#abcdefghijklmnopqrstuvwxyz'.split(''),
+      sterm: '',
     }
   },
-  methods: {
-  },
+  methods: {},
   mounted() {
-    this.$http.get('http://localhost:8080/v3/users').then(data => {
+    console.log(`${this.$config.api_url}users`);
+    this.$http.get(`${this.$config.api_url}users`).then(data => {
       this.users = data.body;
     }, response => {
       this.$notify({
@@ -49,6 +63,19 @@ export default {
         duration: -1,
       })
     });
+  },
+  computed: {
+    filteredUsers: function() {
+      return this.users.filter((user) => {
+        if (this.sterm === '#') {
+          var regex = new RegExp('^[^a-z]', 'i');
+        } else {
+          var regex = new RegExp('^' + this.sterm, 'i');
+        }
+        console.log(regex);
+        return user.name.match(regex);
+      });
+    }
   }
 }
 </script>

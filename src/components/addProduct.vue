@@ -32,17 +32,16 @@
           >
             <b-input-group>
               <b-input-group-text slot="prepend" v-if="serverinfo.currency_before">
-                <span class="text-white">{{ serverinfo.currency }}</span>
+                <span>{{ serverinfo.currency }}</span>
               </b-input-group-text>
               <b-form-input
-                placeholder="1.50"
-                value="1.50"
+                value="'1' + serverinfo.decimal_separator + '50'"
                 pattern="[0-9]?[.,][0-9]+"
                 v-model="product.price"
                 required
               />
               <b-input-group-text slot="append" v-if="!serverinfo.currency_before">
-                <span class="text-white">{{ serverinfo.currency }}</span>
+                <span>{{ serverinfo.currency }}</span>
               </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -61,7 +60,7 @@
           <b-input-group>
               <b-form-input v-model="product.energy" id="product_energy"/>
               <b-input-group-text slot="append">
-                <span class="text-white">{{ serverinfo.energy }} per 100g/ml</span>
+                <span>{{ serverinfo.energy }} per 100g/ml</span>
               </b-input-group-text>
           </b-input-group>
         </b-form-group>
@@ -78,7 +77,7 @@
               v-model="product.sugar"
             />
             <b-input-group-text slot="append">
-              <span class="text-white">g per 100g/ml</span>
+              <span>g per 100g/ml</span>
             </b-input-group-text>
         </b-input-group>
       </b-form-group>
@@ -96,7 +95,7 @@
         <b-input-group>
             <b-form-input v-model="product.caffeine" id="product_caffeine" />
             <b-input-group-text slot="append">
-              <span class="text-white">mg per 100g/ml</span>
+              <span>mg per 100g/ml</span>
             </b-input-group-text>
         </b-input-group>
         </b-form-group>
@@ -113,24 +112,11 @@
               v-model="product.alcohol"
             />
             <b-input-group-text slot="append">
-              <span class="text-white">% by volume</span>
+              <span>% by volume</span>
             </b-input-group-text>
         </b-input-group>
       </b-form-group>
       </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12">
-          <b-form-group
-            id="product_image_group"
-            description="Choose a product image"
-            label="product image"
-            label-for="product_image"
-          >
-            <b-form-file v-model="file" placeholder="Choose a file..." text-variant="text-white"></b-form-file>
-          </b-form-group>
-        </div>
       </div>
       <button type="submit" class="btn btn-primary">Save Product</button>
     </form>
@@ -170,7 +156,7 @@ export default {
         console.log("product posted");
         console.log(response);
         console.log(response.status);
-        window.location = "/products/" + response.body.id;
+        this.$router.push("/products/" + response.body.id);
       }, response => {
         console.log(response);
         if (response.status != 0) {

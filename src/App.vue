@@ -35,18 +35,29 @@
               v-if="$route.path==='/' || /\/\d{0,6}$/g.test($route.path)"
               to="/users/add"
               exact><span class="mdi mdi-account-plus"/> add User</b-nav-item>
+            <b-nav-item
+              v-if="$route.path==='/users/' || /\/users\/?\d{0,6}$/g.test($route.path)"
+              :to="'/users/' + $route.params.id + '/edit'"
+              exact><span class="mdi mdi-account-edit"/>edit User</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </div>
     </b-navbar>
     <div
       id="container"
-      class="container">
-      <notifications
-        position="top center"
-        width="60%"/>
+      class="container mb-4">
+      <notifications position="top center" width="60%"/>
       <router-view :serverinfo="serverinfo"/>
+
     </div>
+    <footer class="footer bg-dark">
+      <div class="container text-center">
+        <span class="text-muted">
+          Developed with <span class="mdi mdi-heart text-danger"></span> in your local hackerspaces
+          &mdash; <a href="https://github.com/telegnom/touchmate" class="text-muted"><span class="mdi mdi-github-circle"></span> contribute to improve touchmate</a>
+        </span>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -57,6 +68,7 @@ import showProduct from './components/showProduct.vue';
 import showProducts from './components/showProducts.vue';
 import showUser from './components/showUser.vue';
 import showUsers from './components/showUsers.vue';
+import editUser from './components/editUser.vue';
 
 export default {
   name: 'App',
@@ -67,18 +79,18 @@ export default {
     'add-product': addProduct,
     'show-products': showProducts,
     'show-product': showProduct,
+    'edit-user': editUser,
   },
   data() {
     return {
       serverinfo: [],
     };
   },
-  beforeCreate() {
+  beforeMount() {
     this.$http.get('//localhost:8080/v3/info').then(
       function(data) {
         console.log(data);
         this.serverinfo = data.body;
-        console.log(data.body.decimal_separator);
       },
       data => {
         console.log(data);

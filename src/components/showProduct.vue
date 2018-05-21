@@ -91,9 +91,9 @@
             description="sugar in g per 100ml/g"
           >
             <b-input-group>
-                <b-form-input v-model="product.sugar" id="product_sugar"/>
+                <b-form-input v-model="product.sugar" id="product_sugar" pattern="[0-9]+[.,][0-9]{1}"/>
                 <b-input-group-text slot="append">
-                  <span c>g per 100g/ml</span>
+                  <span>g per 100g/ml</span>
                 </b-input-group-text>
             </b-input-group>
           </b-form-group>
@@ -123,7 +123,7 @@
             description="alcohol by volume"
           >
             <b-input-group>
-                <b-form-input v-model="product.alcohol" id="product_alcohol"/>
+                <b-form-input v-model="product.alcohol" id="product_alcohol" pattern="(0)|([0-9]+[.,][0-9]{1})"/>
                 <b-input-group-text slot="append">
                   <span>% by volume</span>
                 </b-input-group-text>
@@ -139,7 +139,7 @@
 </template>
 
 <script>
-
+import TouchMate from '../modules/touchmate';
 export default {
   props: ['serverinfo'],
   data () {
@@ -171,13 +171,13 @@ export default {
     saveProduct: function() {
       this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
         name: this.product.name,
-        price: this.product.price.replace(",", "").replace(".", ""),
+        price: TouchMate.stripComma(this.product.price),
         energy: this.product.energy,
-        sugar: this.product.sugar,
+        sugar: TouchMate.stripComma(this.product.sugar),
         caffeine: this.product.caffeine,
-        alcohol: this.product.alcohol,
+        alcohol: TouchMate.stripComma(this.product.alcohol),
         image: this.product.image,
-        package_size: this.product.package_size
+        package_size: this.product.package_size,
       }).then(function(response) {
         console.log(response);
         this.$notify({
@@ -199,7 +199,7 @@ export default {
       const formData = new FormData();
       console.log(this.image);
       formData.append('image', this.image);
-      this.$http.post('//localhost:8080/v3/images/', formData).then( response => {
+      this.$http.post(`${this.$config.api_url}images/`, formData).then( response => {
         console.log(response);
         this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
           image: response.body.id,
@@ -215,21 +215,41 @@ export default {
         console.log(response);
       })
     },
+    loadProduct: function() {
+      this.loading = true;
+      this.$http.get(`${this.$config.api_url}products/` + this.pid + '/').then(function(data) {
+        this.product = data.body;
+        console.log(this.serverinfo);
+        this.productError = false;
+        this.loading = false;
+        if (this.serverinfo.decimal_separator != undefined) {
+          this.product.price = TouchMate.decimalValue(this.product.price, this.serverinfo.decimal_separator);
+          this.product.sugar = TouchMate.decimalValue(this.product.sugar, this.serverinfo.decimal_separator, 1);
+          this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
+        }
+      }, function(data) {
+        this.productStatus = data.status;
+        this.productError = true;
+        this.loading = false;
+      });
+    },
   },
-  created() {
-    this.loading = true;
-    console.log(this.pid);
-    this.$http.get('http://localhost:8080/v3/products/' + this.pid + '/').then(function(data) {
-      this.product = data.body;
-      this.product.price = data.body.price.toString().slice(0, -2) + this.serverinfo.decimal_separator + data.body.price.toString().substr(-2, 2);
-      this.productError = false;
-      this.loading = false;
-    }, function(data) {
-      this.productStatus = data.status;
-      this.productError = true;
-      this.loading = false;
-    });
+  mounted() {
+    this.loadProduct();
   },
+  watch: {
+    serverinfo: function(newVal, oldVal) { // watch it
+      if (this.product.price === parseInt(this.product.price, 10)) {
+        this.product.price = TouchMate.decimalValue(this.product.price, this.serverinfo.decimal_separator);
+      }
+      if (this.product.sugar === parseInt(this.product.sugar, 10)) {
+        this.product.sugar = TouchMate.decimalValue(this.product.sugar, this.serverinfo.decimal_separator, 1);
+      }
+      if (this.product.alcohol === parseInt(this.product.alcohol, 10)) {
+        this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
+      }
+    }
+  }
 }
 </script>
 

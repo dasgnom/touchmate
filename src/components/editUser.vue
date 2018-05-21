@@ -1,13 +1,14 @@
 <template>
   <div>
-    <h2 class="mb-4">Add User</h2>
-    <form class="form" v-on:submit.prevent="saveUser">
+    <h2 class="mb-4">Edit User <em>{{ user.name }}</em></h2>
+    <div class="row">
+    <form class="form col-md-8" v-on:submit.prevent="saveUser">
       <div class="row">
         <div class="col-12">
           <b-form-group
             id="user_name_group"
-            description="Enter your name"
-            label="name"
+            description="Enter your User Name"
+            label="user name"
             label-for="user_name"
           >
             <b-form-input id="user_name" v-model="user.name" required></b-form-input>
@@ -70,6 +71,42 @@
   </div>
   <button class="btn btn-primary" v-on:click.prevent="saveUser">Save User</button>
 </form>
+<div class="col-md-4 text-center">
+  <b-img
+    v-if="user.avatar"
+    :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
+    style="max-width:150px; max-height:150px;"
+    class="img-fluid" />
+  <b-img
+    v-if="!user.avatar && !$config.gravatar.use"
+    class="img-fluid"
+    src="/src/assets/img/user.png"
+    style="max-width:150px; max-height:150px;" />
+  <b-img
+    v-if="!user.avatar && $config.gravatar.use"
+    src="/src/assets/img/user.png"
+    :src="user.email | gravatar"
+    class="img-fluid"
+    style="max-width:150px; max-height:150px;"
+    onerror="this.src='/src/assets/img/user.png'" />
+  <button v-if="user.avatar && !this.$config.gravatar.use" class="btn btn-danger mt-3 mx-auto d-block" v-on:click.prevent.self="deleteImage()">Delete Picture</button>
+  <div v-if="!user.avatar && !this.$config.gravatar.use" class="text-center">
+    <b-form-file v-on:input="saveImage()" id="userAvatar" v-model="image" class="form-control invisible" style="opacity: 0.0;"></b-form-file>
+    <button class="btn btn-secondary" v-on:click.prevent="chooseFiles()">add Avatar</button>
+  </div>
+</div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-danger mt-4 mb-3">Danger Zone</h2>
+    <p class="text-danger">
+      You can delete your user, with immediat effect. Once your account was delete it's
+      impossible to restore it. <strong>Be careful!</strong>
+    </p>
+    <button class="btn btn-md btn-danger">Delete User</button>
+  </div>
+</div>
+
 </div>
 </template>
 
@@ -77,6 +114,8 @@
 export default {
   data () {
     return {
+      id: this.$route.params.id,
+      image: false,
       user: {
         redirect: true,
         active: true,
@@ -90,7 +129,63 @@ export default {
       submitted: false,
     }
   },
+  mounted() {
+    console.log("user loaded");
+    this.fetchUser();
+  },
   methods: {
+    deleteImage: function() {
+      console.log('Delete Image');
+      console.log(this.user.avatar);
+      this.$http.delete('//localhost:8080/v3/images/' + this.user.avatar + '/').then( response => {
+        console.log('image ' +  this.user.avatar + ' deleted');
+        this.user.avatar = "";
+      }, response => {
+        console.log(response);
+      });
+    },
+    saveImage: function() {
+      console.log('add image');
+      const formData = new FormData();
+      console.log(this.image);
+      formData.append('image', this.image);
+      this.$http.post('//localhost:8080/v3/images/', formData).then( response => {
+        console.log(response);
+        this.$http.patch('//localhost:8080/v3/users/' + this.user.id.toString() + '/', {
+          avatar: response.body.id,
+        }).then( response => {
+          this.user = response.body;
+          console.log(response);
+        }, response => {
+          console.log(response);
+        });
+      }, response => {
+        console.log(response);
+      })
+    },
+    chooseFiles: function() {
+      document.getElementById("userAvatar").click();
+    },
+    fetchUser: function(notification=false) {
+      this.loading = true;
+      this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
+        data => {
+          this.user = data.body;
+          console.log(data.body.balance);
+          console.log(this.user);
+          if (notification !== false) {
+            this.$notify(notification);
+          }
+        },
+        data => {
+          this.$notify({
+            type: 'error',
+            text: 'Failed to load user from API.',
+            title: 'Error',
+          });
+        }
+      );
+    },
     saveUser: function() {
       if (this.user.name == undefined) {
         console.log('Bitte alles ausfuellen.');
@@ -101,7 +196,7 @@ export default {
         });
         return;
       }
-      this.$http.post('//localhost:8080/v3/users/', {
+      this.$http.patch(`//localhost:8080/v3/users/${this.id}/`, {
         name: this.user.name,
         email: this.user.email,
         active: this.user.active,
@@ -112,10 +207,9 @@ export default {
         console.log(response.status);
         this.$notify({
           type: 'success',
-          text: 'User <strong>' + this.user.name + '</strong> created.',
+          text: 'User <strong>' + this.user.name + '</strong> updated.',
           title: 'Success',
         });
-        this.$router.push('/users/' + response.body.id + '/edit/');
       }, response => {
         console.log(response);
         if (response.status != 0) {
@@ -132,8 +226,8 @@ export default {
           });
         }
       });
-    }
-  }
+    },
+  },
 }
 </script>
 

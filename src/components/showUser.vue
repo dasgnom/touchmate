@@ -59,7 +59,7 @@
     <h2>Choose your poison</h2>
 
     <div
-      v-show="!products[0]"
+      v-show="!products[0] && !loading"
       class="row">
       <div class="alert alert-warning col-12">
         No produts have been created by now. Be a hero and create the first one!
