@@ -149,7 +149,7 @@ export default {
   },
   mounted() {
     this.fetchUser();
-    this.$http.get('http://localhost:8080/v3/products').then(
+    this.$http.get(`${this.$config.api_url}/products/`).then(
       data => {
         this.products = data.body[0];
         this.productError = false;
@@ -165,7 +165,7 @@ export default {
   methods: {
     fetchUser(notification=false) {
       this.loading = true;
-      this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
+      this.$http.get(`${this.$config.api_url}/users/${this.id}`).then(
         data => {
           this.user = data.body;
           if (notification !== false) {
@@ -201,7 +201,7 @@ export default {
     },
     buyProduct(product) {
       this.$http
-        .post(`//localhost:8080/v3/users/${this.user.id}/buy/`, {
+        .post(`${this.$config.api_url}/users/${this.user.id}/buy/`, {
           product: product.id,
         })
         .then(

@@ -87,7 +87,7 @@ export default {
     };
   },
   beforeMount() {
-    this.$http.get('//localhost:8080/v3/info').then(
+    this.$http.get(`${this.$config.api_url}/info`).then(
       function(data) {
         this.serverinfo = data.body;
       },

@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     saveProduct: function(e) {
-      this.$http.post('//localhost:8080/v3/products/', {
+      this.$http.post(`${this.$config.api_url}products/`, {
         name: this.product.name,
         price: this.product.price.replace(",", "").replace(".", ""),
         energy: this.product.energy,

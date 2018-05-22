@@ -40,9 +40,8 @@ export default {
     }
   },
   created() {
-    this.$http.get('//localhost:8080/v3/users/stats/').then(response => {
+    this.$http.get(`${this.$config.api_url}/users/stats/`).then(response => {
       this.stats = response.body;
-    //  window.location = "/#/users/" + response.body.id;
     }, response => {
       if (response.status != 0) {
         this.resp.error = true;

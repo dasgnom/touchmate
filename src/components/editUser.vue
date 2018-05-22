@@ -108,8 +108,6 @@
     </p>
     <div>
       <b-btn v-b-modal.modal-delUser class="btn-danger">Delete User</b-btn>
-
-      <!-- Modal Component -->
       <b-modal
         id="modal-delUser"
         header-bg-variant="danger"
@@ -166,7 +164,7 @@ export default {
       });
     },
     deleteImage: function() {
-      this.$http.delete('//localhost:8080/v3/images/' + this.user.avatar + '/').then( response => {
+      this.$http.delete(`${this.$config.api_url}images/${this.user.avatar}/`).then( response => {
         this.user.avatar = "";
       }, response => {
       });
@@ -174,8 +172,8 @@ export default {
     saveImage: function() {
       const formData = new FormData();
       formData.append('image', this.image);
-      this.$http.post('//localhost:8080/v3/images/', formData).then( response => {
-        this.$http.patch('//localhost:8080/v3/users/' + this.user.id.toString() + '/', {
+      this.$http.post(`${this.$config.api_url}images/`, formData).then( response => {
+        this.$http.patch(`${this.$config.api_url}users/${this.user.id}/`, {
           avatar: response.body.id,
         }).then( response => {
           this.user = response.body;
@@ -189,7 +187,7 @@ export default {
     },
     fetchUser: function(notification=false) {
       this.loading = true;
-      this.$http.get(`http://localhost:8080/v3/users/${this.id}`).then(
+      this.$http.get(`${this.$config.api_url}users/${this.id}/`).then(
         data => {
           this.user = data.body;
           if (notification !== false) {
@@ -214,7 +212,7 @@ export default {
         });
         return;
       }
-      this.$http.patch(`//localhost:8080/v3/users/${this.id}/`, {
+      this.$http.patch(`${this.$config.api_url}users/${this.id}/`, {
         name: this.user.name,
         email: this.user.email,
         active: this.user.active,

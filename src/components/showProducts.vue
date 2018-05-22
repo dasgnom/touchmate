@@ -31,7 +31,7 @@
           <tr v-for="product in products" v-bind:key="product.id">
               <td>
                 <router-link :to="'/products/' + product.id">
-                  <img v-show="product.image" v-bind:src="'//localhost:8080/v3/images/' + product.image + '/img/'" class="img-fluid" style="max-width: 80px;"/>
+                  <img v-show="product.image" v-bind:src="$config.api_url + 'images/' + product.image + '/img/'" class="img-fluid" style="max-width: 80px;"/>
                   <img v-show="!product.image" src="/src/assets/img/user.png" class="img-fluid" style="max-width: 80px;"/>
                 </router-link>
               </td>

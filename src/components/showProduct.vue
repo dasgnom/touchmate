@@ -190,7 +190,7 @@ export default {
       document.getElementById("productImage").click();
     },
     deleteImage: function() {
-      this.$http.delete(`${this.$config.api_url}images/${this.product.image}/`).then( response => {
+      this.$http.delete(`${this.$config.api_url}/images/${this.product.image}/`).then( response => {
         this.product.image = "";
       }, response => {
         this.imageDeleteError = true;
@@ -203,7 +203,7 @@ export default {
       if (this.product.caffeine === '') {
         this.product.caffeine = null;
       }
-      this.$http.patch(`${this.$config.api_url}products/${this.product.id}/`, {
+      this.$http.patch(`${this.$config.api_url}/products/${this.product.id}/`, {
         name: this.product.name,
         price: TouchMate.stripComma(this.product.price),
         energy: this.product.energy,
@@ -212,6 +212,7 @@ export default {
         alcohol: TouchMate.stripComma(this.product.alcohol),
         package_size: this.product.package_size,
       }).then(function(response) {
+
         this.$notify({
           type: 'success',
           title: 'Success',
@@ -219,6 +220,7 @@ export default {
           duration: 5000,
         });
       }, function(response) {
+        console.log(response);
       });
     },
     updateProduct: function() {
@@ -227,8 +229,8 @@ export default {
     saveImage: function() {
       const formData = new FormData();
       formData.append('image', this.image);
-      this.$http.post(`${this.$config.api_url}images/`, formData).then( response => {
-        this.$http.patch(`${this.$config.api_url}products/${this.product.id}/`, {
+      this.$http.post(`${this.$config.api_url}/images/`, formData).then( response => {
+        this.$http.patch(`${this.$config.api_url}/products/${this.product.id}/`, {
           image: response.body.id,
         }).then( response => {
           this.imageAddSuccess = true;
@@ -246,7 +248,7 @@ export default {
     },
     loadProduct: function() {
       this.loading = true;
-      this.$http.get(`${this.$config.api_url}products/` + this.pid + '/').then(function(data) {
+      this.$http.get(`${this.$config.api_url}/products/` + this.pid + '/').then(function(data) {
         this.product = data.body;
         this.productError = false;
         this.loading = false;

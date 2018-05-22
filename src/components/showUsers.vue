@@ -12,7 +12,7 @@
         <div class="tm-item" v-on:click="$router.push(`users/${user.id}`)">
           <b-img
             v-if="user.avatar"
-            :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
+            :src="$config.api_url + '/images/' + user.avatar + '/img/'"
             class="img-fluid" />
           <b-img
             v-if="!user.avatar && !$config.gravatar.use"

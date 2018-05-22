@@ -103,7 +103,7 @@ export default {
         });
         return;
       }
-      this.$http.post('//localhost:8080/v3/users/', {
+      this.$http.post(`${this.$config.api_url}users/`, {
         name: this.user.name,
         email: this.user.email,
         active: this.user.active,
