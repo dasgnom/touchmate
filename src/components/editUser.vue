@@ -167,6 +167,11 @@ export default {
       this.$http.delete(`${this.$config.api_url}images/${this.user.avatar}/`).then( response => {
         this.user.avatar = "";
       }, response => {
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          text: 'An error occured while deleting your avatar. Please try again. If the error persists, please contact your haxxor in charge.',
+        })
       });
     },
     saveImage: function() {

@@ -154,12 +154,17 @@ export default {
         this.$router.push("/products/" + response.body.id);
       }, response => {
         if (response.status != 0) {
-          this.resp.error = true;
-          var message = response.body;
-          this.resp.message = response.body.error;
+          this.$notify({
+            title: 'Error',
+            type: 'error',
+            text: response.body.error,
+          });
         } else {
-          this.resp.error = true;
-          this.resp.message = "Unable to communicate with the server"
+          this.$notify({
+            title: 'Error',
+            type: 'error',
+            text: 'Unable to communicate with the server. Please try again!',
+          });
         }
       });
     }

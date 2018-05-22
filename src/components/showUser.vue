@@ -40,7 +40,7 @@
       <div class="col-12 col-sm-4 text-center">
         <b-img
           v-if="user.avatar"
-          :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
+          :src="$config.api_url + 'images/' + user.avatar + '/img/'"
           class="img-fluid"
           style="max-width:150px; max-width:150px;" />
         <b-img
@@ -152,12 +152,14 @@ export default {
     this.$http.get(`${this.$config.api_url}/products/`).then(
       data => {
         this.products = data.body[0];
-        this.productError = false;
         this.loading = false;
       },
       data => {
-        this.productStatus = data.status;
-        this.productError = true;
+        this.$notify({
+          type: 'error',
+          text: 'Failed to load the product from the API.',
+          title: 'Error',
+        });
         this.loading = false;
       }
     );

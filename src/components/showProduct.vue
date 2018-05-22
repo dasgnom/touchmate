@@ -193,7 +193,11 @@ export default {
       this.$http.delete(`${this.$config.api_url}/images/${this.product.image}/`).then( response => {
         this.product.image = "";
       }, response => {
-        this.imageDeleteError = true;
+        this.$notfiy({
+          type: 'error',
+          title: 'Error',
+          text: 'An error occured while removing this product\'s image. Please try again or, when the error persists, contact your haxxor in charge'
+        })
       });
     },
     saveProduct: function() {
@@ -221,6 +225,12 @@ export default {
         });
       }, function(response) {
         console.log(response);
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          text: `While updating the product an error occured. The Server respondes \
+          with the error <strong>${response.body.error}</strong>`,
+        });
       });
     },
     updateProduct: function() {
@@ -241,10 +251,19 @@ export default {
             this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
           }
         }, response => {
-          this.productError = true;
+          this.$notify({
+            type: 'error',
+            title: 'Error',
+            text: 'An error occured while updating the product.',
+          });
         });
       }, response => {
-      })
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          text: 'An error occured while uploading the image.',
+        });
+      });
     },
     loadProduct: function() {
       this.loading = true;
@@ -258,7 +277,11 @@ export default {
           this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
         }
       }, function(data) {
-        this.productStatus = data.status;
+        this.$notify({
+          title: 'Error',
+          type: 'error',
+          text: `Unable to load product from the API. The server returned the following error: ${this.data.status}`,
+        });
         this.productError = true;
         this.loading = false;
       });

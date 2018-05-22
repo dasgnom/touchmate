@@ -44,12 +44,17 @@ export default {
       this.stats = response.body;
     }, response => {
       if (response.status != 0) {
-        this.resp.error = true;
-        var message = response.body;
-        this.resp.message = response.body.error;
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          text: 'An error occured while loading the stats. Please try again! ' + this.response.body,
+        });
       } else {
-        this.resp.error = true;
-        this.resp.message = "Unable to communicate with the server"
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          text: 'An error occured while loading the stats. Please try again!',
+        });
       }
     });
   },

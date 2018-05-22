@@ -96,6 +96,7 @@ export default {
           title: 'Error',
           type: 'error',
           text: 'Unable to load server informations from Server.',
+          duration: -1,
         });
       }
     );
