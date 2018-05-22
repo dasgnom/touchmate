@@ -190,7 +190,7 @@ export default {
       document.getElementById("productImage").click();
     },
     deleteImage: function() {
-      this.$http.delete('//localhost:8080/v3/images/' + this.product.image + '/').then( response => {
+      this.$http.delete(`${this.$config.api_url}images/${this.product.image}/`).then( response => {
         this.product.image = "";
       }, response => {
         this.imageDeleteError = true;
@@ -203,7 +203,7 @@ export default {
       if (this.product.caffeine === '') {
         this.product.caffeine = null;
       }
-      this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
+      this.$http.patch(`${this.$config.api_url}products/${this.product.id}/`, {
         name: this.product.name,
         price: TouchMate.stripComma(this.product.price),
         energy: this.product.energy,
@@ -228,7 +228,7 @@ export default {
       const formData = new FormData();
       formData.append('image', this.image);
       this.$http.post(`${this.$config.api_url}images/`, formData).then( response => {
-        this.$http.patch('//localhost:8080/v3/products/' + this.product.id.toString() + '/', {
+        this.$http.patch(`${this.$config.api_url}products/${this.product.id}/`, {
           image: response.body.id,
         }).then( response => {
           this.imageAddSuccess = true;
