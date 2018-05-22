@@ -135,6 +135,28 @@
   </div>
   <button type="submit" class="btn btn-primary">Save Product</button>
 </form>
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-danger mt-4">Danger Zone</h2>
+    <p class="text-danger">You can delete the product. But be carful, it can't be reverted!</p>
+    <div>
+      <b-btn v-b-modal.modal-delProd class="btn-danger">Delete Product</b-btn>
+      <b-modal
+        id="modal-delProd"
+        header-bg-variant="danger"
+        header-text-variant="light"
+        body-text-variant="danger"
+        ok-variant="danger"
+        ok-title="Delete!"
+        cancel-varian="secondary"
+        lazy
+        @ok="deleteProd"
+        centered title="Delete Product?">
+        <p class="my-4">Are you sure you wanna delete <strong>{{ this.product.name }}</strong>? This process can't be reverted.</p>
+      </b-modal>
+    </div>
+  </div>
+</div>
 </div>
 </template>
 
@@ -154,6 +176,16 @@ export default {
     }
   },
   methods: {
+    deleteProd: function() {
+      this.$http.delete(`${this.$config.api_url}products/${this.product.id}/`).then( reposonse => {
+        this.$notify({
+          title: 'Success',
+          type: 'success',
+          text: `<strong>${this.product.name}</strong> was deleted.`,
+        });
+        this.$router.push('/products');
+      });
+    },
     chooseFiles: function() {
       document.getElementById("productImage").click();
     },
@@ -234,7 +266,7 @@ export default {
     this.loadProduct();
   },
   watch: {
-    serverinfo: function(newVal, oldVal) { // watch it
+    serverinfo: function(newVal, oldVal) {
       if (this.product.price === parseInt(this.product.price, 10)) {
         this.product.price = TouchMate.decimalValue(this.product.price, this.serverinfo.decimal_separator);
       }
