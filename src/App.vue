@@ -8,7 +8,7 @@
       fixed="top">
       <div class="container">
         <b-navbar-toggle target="nav_collapse"/>
-        <b-navbar-brand href="/#/">
+        <b-navbar-brand href="/">
           <span class="mdi mdi-food"/>
           TouchMate
         </b-navbar-brand>
@@ -32,13 +32,13 @@
               to="/products/add"
               exact><span class="mdi mdi-tag-plus"/>add Product</b-nav-item>
             <b-nav-item
-              v-if="$route.path==='/' || /\/\d{0,6}$/g.test($route.path)"
-              to="/users/add"
-              exact><span class="mdi mdi-account-plus"/> add User</b-nav-item>
-            <b-nav-item
               v-if="$route.path==='/users/' || /\/users\/?\d{0,6}$/g.test($route.path)"
               :to="'/users/' + $route.params.id + '/edit'"
               exact><span class="mdi mdi-account-edit"/>edit User</b-nav-item>
+            <b-nav-item
+              v-if="/\/users\/\d{0,6}$/g.test($route.path) || $route.path==='/'"
+              to="/users/add"
+              exact><span class="mdi mdi-account-plus"/> add User</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </div>
