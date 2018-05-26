@@ -102,7 +102,9 @@ export default {
   },
   methods: {
     getAudits: function() {
-      this.$http.get(`${this.$config.api_url}/audits/?start=${this.moment(this.startdate).format()}&end=${this.moment(this.enddate).format()}`).then(response => {
+      console.log(this.moment.tz(this.enddate, 'Europe/Berlin').tz('utc').format('YYYY-MM-DD'));
+      this.$http.get(`${this.$config.api_url}/audits/?start=${this.moment(this.startdate).format('YYYY-MM-DD')}&end=${this.moment.tz(this.enddate, this.$config.timezone_client).tz(this.$config.timezone_api).format('YYYY-MM-DD 23:59:59')}`).then(response => {
+        console.log(response);
         this.audits = response.body;
       }, response => {
         if (response.status != 0) {
