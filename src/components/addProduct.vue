@@ -9,18 +9,16 @@
     <form class="form" v-on:submit.prevent="saveProduct">
       <div class="row">
         <div class="col-12">
-
-          <b-alert variant="danger" show v-show="resp.error"><strong>An error occurred:</strong> {{ resp.message }}</b-alert>
-            <b-form-group
-              id="product_name_group"
-              description="Enter the product name"
-              label="product name"
-              label-for="product_name"
-            >
-              <b-form-input id="product_name" v-model="product.name" required></b-form-input>
-            </b-form-group>
-          </div>
+          <b-form-group
+            id="product_name_group"
+            description="Enter the product name"
+            label="product name"
+            label-for="product_name"
+          >
+            <b-form-input id="product_name" v-model="product.name" required></b-form-input>
+          </b-form-group>
         </div>
+      </div>
       <div class="row">
         <div class="col-12">
 
@@ -44,6 +42,18 @@
                 <span>{{ serverinfo.currency }}</span>
               </b-input-group-text>
             </b-input-group>
+          </b-form-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <b-form-group
+            id="product_package_size_group"
+            description="Enter product's package size"
+            label="product's package"
+            label-for="product_package_size"
+          >
+            <b-form-input id="product_package_size" v-model="product.package_size"></b-form-input>
           </b-form-group>
         </div>
       </div>
@@ -146,11 +156,17 @@ export default {
       this.$http.post(`${this.$config.api_url}products/`, {
         name: this.product.name,
         price: this.product.price.replace(",", "").replace(".", ""),
+        package_size: this.product.package_size,
         energy: this.product.energy,
         sugar: this.product.sugar,
         caffeine: this.product.caffeine,
         alcohol: this.product.alcohol,
       }).then(response => {
+        this.$notify({
+          title: 'Success',
+          text: `<strong>${this.product.name}</strong> created.`,
+          type: 'success',
+        });
         this.$router.push("/products/" + response.body.id);
       }, response => {
         if (response.status != 0) {

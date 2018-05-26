@@ -81,6 +81,10 @@
               v-if="product.image"
               :src="$config.api_url + '/images/' + product.image + '/img/'"
               class="img-fluid" />
+            <b-img
+              v-if="!product.image"
+              src="/src/assets/img/product.png"
+              class="img-fluid" />
           </div>
           <div class="name">
             {{ product.name }}
