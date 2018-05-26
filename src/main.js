@@ -2,6 +2,7 @@ import '../node_modules/bootswatch/dist/slate/bootstrap.css';
 import App from './App.vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 import Crypto from 'crypto';
+import Datepicker from 'vuejs-datepicker';
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 import Notifications from 'vue-notification';
@@ -24,6 +25,7 @@ try {
 const config = { ...defaultConfig, ...localConfig };
 
 Vue.use(BootstrapVue);
+Vue.use(Datepicker);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(Notifications);

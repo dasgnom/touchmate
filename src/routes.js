@@ -1,6 +1,7 @@
 import addProduct from './components/addProduct.vue';
 import addUser from './components/addUser.vue';
 import editUser from './components/editUser.vue';
+import showAudits from './components/showAudits.vue';
 import showProduct from './components/showProduct.vue';
 import showProducts from './components/showProducts.vue';
 import showStats from './components/showStats.vue';
@@ -9,6 +10,7 @@ import showUsers from './components/showUsers.vue';
 
 export default [
   { path: '/', component: showUsers, props: true },
+  { path: '/audits', component: showAudits, props: true },
   { path: '/stats', component: showStats, props: true },
   { path: '/users/add', component: addUser, props: true },
   { path: '/users/:id', component: showUser, props: true },

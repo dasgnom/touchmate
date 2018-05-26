@@ -22,6 +22,9 @@
             <b-nav-item
               to="/stats"
               exact><span class="mdi mdi-chart-bar"/> Stats</b-nav-item>
+              <b-nav-item
+                to="/audits"
+                exact><span class="mdi mdi-chart-bar"/> Audits</b-nav-item>
             <b-nav-item
               to="/products"
               exact><span class="mdi mdi-tag"/> Products</b-nav-item>
@@ -69,6 +72,7 @@ import showProducts from './components/showProducts.vue';
 import showUser from './components/showUser.vue';
 import showUsers from './components/showUsers.vue';
 import editUser from './components/editUser.vue';
+import showAudits from './components/showAudits';
 
 export default {
   name: 'App',
@@ -80,6 +84,7 @@ export default {
     'show-products': showProducts,
     'show-product': showProduct,
     'edit-user': editUser,
+    'audits-show': showAudits,
   },
   data() {
     return {
