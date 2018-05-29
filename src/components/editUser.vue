@@ -77,7 +77,7 @@
 <div class="col-md-4 text-center">
   <b-img
     v-if="user.avatar"
-    :src="'//localhost:8080/v3/images/' + user.avatar + '/img/'"
+    :src="`${$config.api_url}/images/${user.avatar}/img/`"
     style="max-width:150px; max-height:150px;"
     class="img-fluid" />
   <b-img
