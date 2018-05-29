@@ -43,6 +43,16 @@ div.vue-notification div.notification-title {
   font-size: 1.5em !important;
 }
 
+span.announcement-icon {
+  margin-right: 6px;
+}
+
+.announcement-text {
+  transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

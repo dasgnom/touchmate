@@ -49,6 +49,12 @@
     <div
       id="container"
       class="container mb-4">
+      <b-alert
+        :show="this.$config.announcement.text !== ''"
+        :variant="this.$config.announcement.type"
+      >
+      <span v-show="$config.announcement.icon !== ''" class="mdi mdi-24px announcement-icon" :class="$config.announcement.icon"></span>
+      <span v-html="this.$config.announcement.text" class="announcement-text"></span></b-alert>
       <notifications position="top center" width="60%"/>
       <router-view :serverinfo="serverinfo"/>
 

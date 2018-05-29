@@ -15,4 +15,9 @@ module.exports = {
     size: 200,
     rating: 'x', // see https://de.gravatar.com/site/implement/images/ for details
   },
+  announcement: {
+    text: '', // empty string to disable announcements
+    type: 'info', // must be one of info, danger, success, warning, primary, secondary
+    icon: '', // choose a mdi icon
+  },
 };
