@@ -6,13 +6,16 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "cleanup": "rimraf dist/*",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build:perf": "npm run cleanup && NODE_ENV=production webpack --profile --json > ./webpack-stats.json && webpack-bundle-analyzer ./webpack-stats.json dist/ --mode static -s gzip --report ./BundleReport.html --no-open"
   },
   "dependencies": {
     "bootstrap": "^4.1.0",
     "bootstrap-vue": "^2.0.0-rc.8",
     "jquery": "^3.3.1",
+    "md5": "^2.2.1",
     "mdi": "^2.2.43",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.16",
@@ -46,9 +49,11 @@
     "file-loader": "^1.1.4",
     "popper.js": "^1.14.3",
     "prettier": "^1.12.1",
+    "rimraf": "^2.6.2",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.6.0",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-dev-server": "^2.9.1"
   }
 }
