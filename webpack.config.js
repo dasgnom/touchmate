@@ -1,7 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -44,10 +47,12 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true,
-    overlay: true,
+    inline: true,
+    hot: true,
     proxy: {
-      '/v3': 'http://localhost:2342',
+      '/v3': {
+        target: 'http://localhost:2342',
+      },
     },
   },
   performance: {
@@ -55,6 +60,7 @@ module.exports = {
   },
   devtool: '#eval-source-map',
   plugins: [
+    new VueLoaderPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.NormalModuleReplacementPlugin(
       /moment-timezone\/data\/packed\/latest\.json/,
@@ -72,14 +78,17 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map';
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false,
-      },
-    }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
     }),
   ]);
+  module.exports.optimization = {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        extractComments: true,
+      }),
+    ],
+  };
 }
