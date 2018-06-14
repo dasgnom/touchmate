@@ -14,3 +14,6 @@ config_local.js
 *.ntvs*
 *.njsproj
 *.sln
+
+BundleReport.html
+webpack-stats.json

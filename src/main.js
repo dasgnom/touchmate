@@ -1,8 +1,9 @@
 import '../node_modules/bootswatch/dist/slate/bootstrap.css';
+import 'moment/locale/de';
 import App from './App.vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
-import Crypto from 'crypto';
 import Datepicker from 'vuejs-datepicker';
+import md5 from 'md5';
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
 import Notifications from 'vue-notification';
@@ -92,9 +93,7 @@ Vue.filter(
     if (email == null) {
       return '/src/assets/img/user.png';
     }
-    const hash = Crypto.createHash('md5')
-      .update(email)
-      .digest('hex');
+    const hash = md5(email);
 
     return `${config.gravatar.base_url}${hash}?s=${size}&d=${fallback}&r=${rating}`;
   }

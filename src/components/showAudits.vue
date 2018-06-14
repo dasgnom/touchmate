@@ -72,7 +72,7 @@
         </tr>
         <tr v-for="audit in audits.audits" v-bind:class="{'bg-success': audit.action == 'deposit'}">
           <td>
-            {{ audit.created_at }}
+            {{ audit.created_at | datetime }}
           </td>
           <td>
             <span v-if="audit.action !== 'deposit'">-</span>{{ audit.amount | currency }}
