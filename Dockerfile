@@ -1,9 +1,10 @@
 FROM node:8-alpine
 
-COPY . .
-RUN apk update && apk add nginx && yarn && yarn build && mkdir -p /srv/touchmate && cp -r /dist /srv/touchmate && cp /index.html /srv/touchmate && mkdir -p /run/nginx && \
-      sed -i 's/return 404/root \/srv\/touchmate/' /etc/nginx/conf.d/default.conf && \
-      echo -e "location /v3/ {\nproxy_pass http://localhost:2342/;\n}"
-
+RUN apk update && apk add nginx git
+RUN git clone https://github.com/telegnom/touchmate.git
+WORKDIR /touchmate
+RUN yarn && yarn build && mkdir -p /srv/touchmate && cp -r index.html dist/ src/ node_modules/ /srv/touchmate && mkdir -p /run/nginx && \
+      cp nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80:80
 CMD /usr/sbin/nginx -g 'daemon off;'
 
