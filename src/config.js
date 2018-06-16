@@ -1,5 +1,5 @@
 module.exports = {
-  api_url: 'http://localhost:8080/v3/',
+  api_url: 'http://localhost/v3/',
   timezone_api: 'UTC',
   timezone_client: 'Europe/Berlin',
   datetimeformat: 'YYYY-MM-DD HH:mm:ss',
