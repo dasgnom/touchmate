@@ -258,10 +258,16 @@ export default {
           });
         });
       }, response => {
+        if (response.status === 413) {
+          var msg = 'The uploaded image is too large. Maximum upload size is';
+	    console.log(response);
+        } else if (response.status === 415) {
+          var msg = 'Only PNGs and JPGs are supported.'
+        }
         this.$notify({
           type: 'error',
           title: 'Error',
-          text: 'An error occured while uploading the image.',
+          text: msg,
         });
       });
     },
