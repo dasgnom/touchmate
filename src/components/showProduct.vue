@@ -259,10 +259,10 @@ export default {
         });
       }, response => {
         if (response.status === 413) {
-          var msg = 'The uploaded image is too large. Maximum upload size is';
+          var msg = 'The uploaded image extends the maximum allowed size';
 	    console.log(response);
         } else if (response.status === 415) {
-          var msg = 'Only PNGs and JPGs are supported.'
+          var msg = 'Sorry, only PNGs and JPGs are supported.'
         }
         this.$notify({
           type: 'error',
@@ -283,10 +283,16 @@ export default {
           this.product.alcohol = TouchMate.decimalValue(this.product.alcohol, this.serverinfo.decimal_separator, 1);
         }
       }, function(data) {
+        if (data.status === 404) {
+          var msg = "The product with the given id does not exsist.";
+        }
+        if (data.status === 500){
+          var msg = `The server returned an internal error. Additionally the following error was reported: ${this.data.status}`;
+        }
         this.$notify({
           title: 'Error',
           type: 'error',
-          text: `Unable to load product from the API. The server returned the following error: ${this.data.status}`,
+          text: msg,
         });
         this.productError = true;
         this.loading = false;

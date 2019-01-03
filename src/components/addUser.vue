@@ -19,7 +19,7 @@
           <b-form-group
             id="user_email_group"
             description="Enter your E-Mail address"
-            label="email address"
+            label="email address (optional for gravatar)"
             label-for="user_email"
           >
             <b-form-input id="user_email" v-model="user.email" required></b-form-input>

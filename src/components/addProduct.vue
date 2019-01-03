@@ -170,18 +170,23 @@ export default {
         this.$router.push("/products/" + response.body.id);
       }, response => {
         if (response.status != 0) {
-          this.$notify({
-            title: 'Error',
-            type: 'error',
-            text: response.body.error,
-          });
+          if (response.status === 400) {
+	    var msg = "You entered an invalid value";
+	  }
+          if (response.status === 409) {
+	    var msg = "There is already a product with this name. Please choose another name!";
+	  }
+          if (response.status === 500) {
+	    var msg = `An internal server error occurred: ${response.body.error}`
+	  }
         } else {
-          this.$notify({
-            title: 'Error',
-            type: 'error',
-            text: 'Unable to communicate with the server. Please try again!',
-          });
+          var msg = 'Unable to communicate with the server. Please try again!';
         }
+        this.$notify({
+	  title: 'Error',
+	  type: 'error',
+	  text: msg,  
+	});				   
       });
     }
   }

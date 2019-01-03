@@ -203,7 +203,23 @@ export default {
             this.fetchUser(notification);
             this.user.redirect ? this.$router.push('/') : false;
           }
-        });
+        },
+        response => {
+          if (response.body.error == 'you have reached the maximum credit limit') {
+            var message = 'You have reached the credit limit. You can\'t add any further funds to your account.';
+          }
+          else if (response.body.error == 'insufficient funds on your account') {
+            var message = 'You have reached the credit limit. You have to recharge your account before you can buy this item.';
+          } else {
+            var messsage = 'An error occurred while processing your transaction'
+          }
+          this.$notify({
+            title: 'Error',
+            type: 'error',
+            text: message,
+          });
+        }
+      );
     },
     buyProduct(product) {
       this.$http
